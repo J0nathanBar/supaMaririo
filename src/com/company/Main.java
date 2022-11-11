@@ -6,9 +6,9 @@ import java.io.IOException;
 public class Main {
     public static void init() throws IOException {
         JFrame frame = new JFrame();
-        GamePanel panel = new GamePanel(600,600,8888);
+        GamePanel panel = new GamePanel(500,828,8888);
         frame.add(panel);
-        frame.setSize(600,600);
+        frame.setSize(828,500);
         frame.setVisible(true);
     }
 

@@ -103,7 +103,9 @@ public class Mario extends Creature{
     public void run() {
         while (true){
             super.run();
-          //   System.out.println("X: "+ panel.getLevelX() + "Y: "+ y);
+          setStanding();
+
+          System.out.println("x: "+ x +" y: " +y+" levelX: "+panel.getLevelX());
 
 
         if (!jumping &&!standing){
@@ -148,6 +150,7 @@ public class Mario extends Creature{
         this.jumping = jumping;
     }
 
+
     public boolean isCanJump() {
         return canJump;
     }
@@ -167,4 +170,20 @@ public class Mario extends Creature{
     public void setJumpcount(int jumpcount) {
         this.jumpcount = jumpcount;
     }
+
+    @Override
+    public void setStanding(boolean standing) {
+        super.setStanding(standing);
+    }
+
+    public void setStanding() {
+        for (Platform p: panel.getPlatforms()) {
+            if (p.isStandingThis()){
+                setStanding(true);
+                return;
+            }
+        }
+        setStanding(false);
+    }
+
 }

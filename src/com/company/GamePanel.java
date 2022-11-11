@@ -17,7 +17,7 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
     private Image background;
     private int height,width,levelX;
     private ArrayList<Platform> platforms;
-    private static final int floorY = 515,floorH = 100;
+    private static final int floorY = 425,floorH = 100;
 
     Socket socket;
     InputStream inputStream;
@@ -40,7 +40,7 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
         background = new ImageIcon("level1.png").getImage();
         mario.start();
         setPlatforms();
-        connectToServer(port);
+       // connectToServer(port);
     }
     public void connectToServer( int port ) throws IOException
     {
@@ -82,7 +82,8 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
             if (canMove(1)) {
                 mario.moveX();
 
-                if (mario.getX() == width / 2 && levelX > -1800) {
+
+                if (mario.getX() >= 300 && levelX > -1800) {
                     System.out.println("X: " + levelX);
                     levelX -= mario.dx;
                     mario.updateRect();
@@ -104,7 +105,7 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
                 mario.setJumping(true);
                 mario.moveY();
                 mario.setCanJump(false);
-                System.out.println("Y: "+mario.getY());}
+               }
         }
         else if (code == KeyEvent.VK_DOWN){
             mario.moveControl(-1);
@@ -135,8 +136,8 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
 
     public void setPlatforms(){
         platforms = new ArrayList<>();
-        platforms.add(new Platform(-10,floorY,490,floorH,this,mario));
-        platforms.add(new Platform(310,440,30,525-440,this,mario));
+        platforms.add(new Platform(-10,floorY,1000,floorH,this,mario));
+        platforms.add(new Platform(300+140,365,30,525-440,this,mario));
 
 
         for (Platform platform : platforms) {
@@ -195,5 +196,83 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
         }
     }
 
+    public Mario getMario() {
+        return mario;
+    }
 
+    public void setMario(Mario mario) {
+        this.mario = mario;
+    }
+
+
+
+    public void setBackground(Image background) {
+        this.background = background;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public ArrayList<Platform> getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(ArrayList<Platform> platforms) {
+        this.platforms = platforms;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
+    public OutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
+    }
+
+    public ObjectOutputStream getObjectOutputStream() {
+        return objectOutputStream;
+    }
+
+    public void setObjectOutputStream(ObjectOutputStream objectOutputStream) {
+        this.objectOutputStream = objectOutputStream;
+    }
+
+    public ObjectInputStream getObjectInputStream() {
+        return objectInputStream;
+    }
+
+    public void setObjectInputStream(ObjectInputStream objectInputStream) {
+        this.objectInputStream = objectInputStream;
+    }
 }
