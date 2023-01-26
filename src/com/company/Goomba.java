@@ -95,7 +95,7 @@ public class Goomba extends Creature {
         while (alive || x >0) {
             super.run();
             fall();
-            System.out.println("here");
+          //  System.out.println("here");
             if (alive)
                 animate(0, 1);
             else animate(2,2);

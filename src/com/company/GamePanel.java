@@ -325,4 +325,32 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         }
 
     }
+
+    public ArrayList<Mario> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Mario> players) {
+        this.players = players;
+    }
+
+    public void setMonsters(ArrayList<Creature> monsters) {
+        this.monsters = monsters;
+    }
+
+    public static int getPauseflag() {
+        return pauseflag;
+    }
+
+    public static void setPauseflag(int pauseflag) {
+        GamePanel.pauseflag = pauseflag;
+    }
+
+    public Byte getPlayerIndex() {
+        return playerIndex;
+    }
+
+    public void setPlayerIndex(Byte playerIndex) {
+        this.playerIndex = playerIndex;
+    }
 }

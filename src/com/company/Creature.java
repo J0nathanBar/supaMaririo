@@ -7,7 +7,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class Creature extends Thread {
-    protected int x, y, dx, dy, size, index, width, height, hp;
+    protected int x, y, dx, dy, size, index, width, height;
+    Byte hp;
     protected final double gravity = 0.6;
     protected boolean standing;
     protected Rectangle rect;
@@ -38,11 +39,11 @@ public abstract class Creature extends Thread {
     }
 
 
-    public int getHp() {
+    public Byte getHp() {
         return hp;
     }
 
-    public void setHp(int hp) {
+    public void setHp(Byte hp) {
         this.hp = hp;
     }
 

@@ -48,6 +48,7 @@ public class ClientEnd extends JPanel implements Runnable {
             Object o = objectInputStream.readObject();
             if (o instanceof Data) {
                 d = (Data) o;
+                //System.out.println(d);
             }
 
         } catch (ClassNotFoundException e) {
@@ -122,11 +123,13 @@ public class ClientEnd extends JPanel implements Runnable {
 //            reqPause = false;
 //        } else {
 //            // Send current direction to all other clients
-//            d = new Data(playerIndex, m.players.get(playerIndex).direction, (byte) m.players.get(playerIndex).i,
-//                    (byte) m.players.get(playerIndex).j);
-//            if (d != null && d.direction != null) {
-//                objectOutputStream.writeObject(d);
-//            }
+
+            Mario thisMario = panel.getPlayers().get(playerIndex);
+            d = new Data(thisMario.getX(),thisMario.getY(),panel.getLevelX(),thisMario.getHp(),playerIndex
+            );
+            if (d != null) {
+              objectOutputStream.writeObject(d);
+         }
      //   }
     }
 
@@ -142,7 +145,6 @@ public class ClientEnd extends JPanel implements Runnable {
             f.add(e.panel);
             f.setSize(828,500);
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            f.setSize(700, 620);
             f.setResizable(false);
             f.setVisible(true);
             f.setFocusable(false);
