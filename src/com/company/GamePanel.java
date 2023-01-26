@@ -12,12 +12,16 @@ import java.net.Socket;
 import java.sql.Time;
 import java.util.ArrayList;
 
-public class GamePanel extends JPanel implements KeyListener,ActionListener,Runnable  {
+public class GamePanel extends JPanel implements KeyListener, ActionListener, Runnable {
     private Mario mario;
     private Image background;
-    private int height,width,levelX;
+    private int height, width, levelX;
     private ArrayList<Platform> platforms;
-    private static final int floorY = 425,floorH = 100;
+    private ArrayList<Mario> players;
+    private ArrayList<Creature> monsters;
+    private static final int floorY = 425, floorH = 100;
+    private static int pauseflag;
+    private Byte playerIndex;
 
     Socket socket;
     InputStream inputStream;
@@ -26,24 +30,27 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
     ObjectInputStream objectInputStream;
 
 
- //   Graphics g;
-    public GamePanel(int height,int width,int port) throws IOException {
-        levelX =0;
+    //   Graphics g;
+    public GamePanel(int height, int width,Byte playerIndex) throws IOException {
+        levelX = 0;
         this.height = height;
         this.width = width;
+        this.playerIndex = playerIndex;
         mario = new Mario(this);
-        Timer t = new Timer(5,this);
+        Timer t = new Timer(5, this);
         addKeyListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         requestFocusInWindow();
         background = new ImageIcon("level1.png").getImage();
-        mario.start();
+      //  mario.start();
         setPlatforms();
-       // connectToServer(port);
+        setMonsters();
+
+     //   connectToServer(port);
     }
-    public void connectToServer( int port ) throws IOException
-    {
+
+    public void connectToServer(int port) throws IOException {
         socket = new Socket("localhost", port);
 
         inputStream = socket.getInputStream();
@@ -54,15 +61,30 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
 
     }
 
+    public ArrayList<Creature> getMonsters() {
+        return monsters;
+    }
+
+    public void setMonsters() {
+        monsters = new ArrayList<>();
+        monsters.add(new Goomba(this, 200, 200));
+        for (Creature c : monsters) {
+            c.start();
+
+        }
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background,levelX,0,width*4,height*2,null);
+        g.drawImage(background, levelX, 0, width * 4, height * 2, null);
         for (Platform p : platforms) {
             p.drawp(g);
         }
-        mario.drawMario(g);
+        for (Creature c : monsters) {
+            c.drawCreature(g);
+        }
+        mario.drawCreature(g);
     }
 
     @Override
@@ -84,30 +106,33 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
 
 
                 if (mario.getX() >= 300 && levelX > -1800) {
-                    System.out.println("X: " + levelX);
+                 //   System.out.println("X: " + levelX);
                     levelX -= mario.dx;
                     mario.updateRect();
                     for (Platform p : platforms) {
                         p.moveX();
                         p.updateRect();
                     }
+                    for (Creature c:monsters){
+                         c.moveX();
+                        c.updateRect();
+                        if (c.getX() < 0)
+                            monsters.remove(c);
+                    }
                 }
             }
-        }
-        else if (code==KeyEvent.VK_LEFT){
-            if (canMove(-1)){
+        } else if (code == KeyEvent.VK_LEFT) {
+            if (canMove(-1)) {
                 mario.setDir(false);
                 mario.moveX();
             }
-        }
-        else if (code == KeyEvent.VK_UP){
-            if (mario.isCanJump()){
+        } else if (code == KeyEvent.VK_UP) {
+            if (mario.isCanJump()) {
                 mario.setJumping(true);
                 mario.moveY();
                 mario.setCanJump(false);
-               }
-        }
-        else if (code == KeyEvent.VK_DOWN){
+            }
+        } else if (code == KeyEvent.VK_DOWN) {
             mario.moveControl(-1);
         }
 
@@ -134,20 +159,21 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
         this.levelX = levelX;
     }
 
-    public void setPlatforms(){
+    public void setPlatforms() {
         platforms = new ArrayList<>();
-        platforms.add(new Platform(-10,floorY,1000,floorH,this,mario));
-        platforms.add(new Platform(300+140,365,30,525-440,this,mario));
+        platforms.add(new Platform(-10, floorY, 1000, floorH, this, mario));
+        platforms.add(new Platform(300 + 140, 365, 30, 525 - 440, this, mario));
 
 
         for (Platform platform : platforms) {
             platform.start();
         }
     }
-    boolean canMove(int dir){//right:: dir =1, left: dir = -1
-        for (Platform p:platforms) {
-            System.out.println("platfrom:: "+p.getRect().getMinX());
-            System.out.println("mario:: "+mario.getRect().getMaxX());
+
+    boolean canMove(int dir) {//right:: dir =1, left: dir = -1
+        for (Platform p : platforms) {
+         //   System.out.println("platfrom:: " + p.getRect().getMinX());
+        //    System.out.println("mario:: " + mario.getRect().getMaxX());
             if (p.runsTo(dir))
                 return false;
         }
@@ -158,7 +184,8 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
     @Override
     public void run() {
 
-        Data d1,d2;;
+        Data d1, d2;
+        ;
 
         try {
             // mind the gap  MS 29-7-2022
@@ -168,8 +195,8 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
             // instead of the "same" object p1
 
 
-            d1 = new Data(mario.getHp(),mario.getX(),mario.getY(),levelX);
-            objectOutputStream.writeObject(d1);
+        //    d1 = new Data(mario.getHp(), mario.getX(), mario.getY(), levelX);
+          //  objectOutputStream.writeObject(d1);
 
             d2 = (Data) objectInputStream.readObject();
 
@@ -203,7 +230,6 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
     public void setMario(Mario mario) {
         this.mario = mario;
     }
-
 
 
     public void setBackground(Image background) {
@@ -274,5 +300,29 @@ public class GamePanel extends JPanel implements KeyListener,ActionListener,Runn
 
     public void setObjectInputStream(ObjectInputStream objectInputStream) {
         this.objectInputStream = objectInputStream;
+    }
+    private void initPlayers(int playerCount) {
+        // Start players array at 1 instead of 0
+        if (players.size() == 0) {
+            players.add(0, null);
+        }
+        // Adding amount of players connected (Recieved from server)
+        for (int i = 1; i <= playerCount; i++) {
+            players.add(new Mario(this));
+
+        }
+        //Set the player which belongs to this client as being controlled by the keyboard
+        //	(and not by data from the server)
+        players.get(playerIndex).setControlled(true);
+        System.out.println(players);
+    }
+
+    private void startPlayers() {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i) != null) {
+                players.get(i).start();
+            }
+        }
+
     }
 }

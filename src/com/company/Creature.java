@@ -1,17 +1,17 @@
 package com.company;
 
 
-
 import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class Creature extends Thread  {
-  protected   int x,y,dx,dy,size,index,width,height,hp;
-  protected boolean standing;
-  protected Rectangle rect;
- protected GamePanel panel;
+public abstract class Creature extends Thread {
+    protected int x, y, dx, dy, size, index, width, height, hp;
+    protected final double gravity = 0.6;
+    protected boolean standing;
+    protected Rectangle rect;
+    protected GamePanel panel;
 
     public Rectangle getRect() {
         return rect;
@@ -50,12 +50,15 @@ public abstract class Creature extends Thread  {
     protected ArrayList<Image> images;
 
 
-
     public abstract boolean interacts(Creature c);
+
     public abstract boolean touches(Platform p);
+
     protected abstract void initArr();
+
     protected abstract void defaultValues();
-    protected abstract void animate(int start,int end);
+
+    protected abstract void animate(int start, int end);
 
     public int getX() {
         return x;
@@ -132,25 +135,28 @@ public abstract class Creature extends Thread  {
     public void setImages(ArrayList<Image> images) {
         this.images = images;
     }
-    public void moveX(){
-        int mod=1;
-        if(!dir )
+
+    public void moveX() {
+        int mod = 1;
+        if (!dir)
             mod = -1;
 
-        x += (dx*mod);
+        x += (dx * mod);
     }
-    public void moveY(){
-        y+=dy;
-        rect = new Rectangle(x,y,width,height);
+
+    public void moveY() {
+        y += dy;
+        rect = new Rectangle(x, y, width, height);
     }
 
     public void setDir(boolean dir) {
         this.dir = dir;
     }
-    public void updateRect(){
-        if(dir)
-            rect = new Rectangle(x,y,size,size);
-        else rect = new Rectangle(x-size/2,y,size,size);
+
+    public void updateRect() {
+        if (dir)
+            rect = new Rectangle(x, y, size, size);
+        else rect = new Rectangle(x - size / 2, y, size, size);
     }
 
     @Override
@@ -159,5 +165,15 @@ public abstract class Creature extends Thread  {
         updateRect();
 
         panel.repaint();
+
+    }
+
+    public void drawCreature(Graphics g) {
+        g.drawRect((int) rect.getX(), (int) rect.getY(), size, size);
+        Image img = images.get(index);
+        if (dir)
+            g.drawImage(img, x, y, size, size, null);
+        else g.drawImage(img, x + size / 2, y, -size, size, null);
+
     }
 }

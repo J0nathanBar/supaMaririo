@@ -115,17 +115,36 @@ public class Platform extends Thread {
         }
 
     }
+    public void monsterStands(Creature creature){
+//        Rectangle creatureFeet = new Rectangle(creature.getRect().x, creature.getRect().y + creature.getRect().height, creature.getRect().width, 1);
+//
+//        // Check if the creature's feet intersect with the platform
+//       creature.setStanding( creatureFeet.intersects(this.rect));
+        if (creature.standing)
+            return;
+        creature.setStanding(rect.intersects(creature.getRect()));
+    }
 
     public boolean runsTo(int d) {//right: d =1, left: d=-1
-        //  Rectangle temp = new Rectangle(x+(d*10),y,width,height);
-        standsOn();
-        if (height != floorH)
-            System.out.println("stands on: " + standingThis);
-        boolean a = false;
-        if (height != floorH) a = rect.intersects(mario.getRect()) && !standingThis;//&&!standingThis;
-        System.out.println(a);
-        return a;
+
+        Rectangle marioHitbox = mario.getRect();
+        Rectangle platformHitbox = rect;
+
+        if (d == 1) {
+            // Check for collision on the right side of Mario
+            return marioHitbox.getMaxX() >= platformHitbox.getMinX() &&
+                    marioHitbox.getMinX() < platformHitbox.getMinX() &&
+                    marioHitbox.getMinY() < platformHitbox.getMaxY() &&
+                    marioHitbox.getMaxY() > platformHitbox.getMinY();
+        } else {
+            // Check for collision on the left side of Mario
+            return marioHitbox.getMinX() <= platformHitbox.getMaxX() &&
+                    marioHitbox.getMaxX() > platformHitbox.getMaxX() &&
+                    marioHitbox.getMinY() < platformHitbox.getMaxY() &&
+                    marioHitbox.getMaxY() > platformHitbox.getMinY();
+        }
     }
+
 
     @Override
     public void run() {
@@ -133,9 +152,10 @@ public class Platform extends Thread {
         while (true) {
             updateRect();
             standsOn();
+           for (Creature c:panel.getMonsters()){
+               monsterStands(c);
+           }
             panel.repaint();
-
-
         }
     }
 
