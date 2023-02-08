@@ -35,6 +35,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         levelX = 0;
         this.height = height;
         this.width = width;
+        System.out.println("eggies");
         this.playerIndex = playerIndex;
        // mario = new Mario(this);
         players = new ArrayList<>();
