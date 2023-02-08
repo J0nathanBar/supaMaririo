@@ -95,14 +95,20 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         for (Creature c : monsters) {
             c.drawCreature(g);
         }
-        mario.drawCreature(g);
+
+        // mario.drawCreature(g);
+        for (Mario mario:players
+             ) {
+            if(mario != null)
+                mario.drawCreature(g);
+        }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
         int code = e.getKeyCode();
         if (code == KeyEvent.VK_RIGHT)
-            mario.moveX();
+            players.get(playerIndex).moveX();
         repaint();
 
     }
@@ -111,15 +117,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         if (code == KeyEvent.VK_RIGHT) {
-            mario.setDir(true);
+            players.get(playerIndex).setDir(true);
             if (canMove(1)) {
-                mario.moveX();
+                players.get(playerIndex).moveX();
 
 
-                if (mario.getX() >= 300 && levelX > -1800) {
+                if (players.get(playerIndex).getX() >= 300 && levelX > -1800) {
                  //   System.out.println("X: " + levelX);
-                    levelX -= mario.dx;
-                    mario.updateRect();
+                    levelX -= players.get(playerIndex).dx;
+                    players.get(playerIndex).updateRect();
                     for (Platform p : platforms) {
                         p.moveX();
                         p.updateRect();
@@ -134,17 +140,17 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             }
         } else if (code == KeyEvent.VK_LEFT) {
             if (canMove(-1)) {
-                mario.setDir(false);
-                mario.moveX();
+                players.get(playerIndex).setDir(false);
+                players.get(playerIndex).moveX();
             }
         } else if (code == KeyEvent.VK_UP) {
-            if (mario.isCanJump()) {
-                mario.setJumping(true);
-                mario.moveY();
-                mario.setCanJump(false);
+            if (players.get(playerIndex).isCanJump()) {
+                players.get(playerIndex).setJumping(true);
+                players.get(playerIndex).moveY();
+                players.get(playerIndex).setCanJump(false);
             }
         } else if (code == KeyEvent.VK_DOWN) {
-            mario.moveControl(-1);
+            players.get(playerIndex).moveControl(-1);
         }
 
         repaint();
@@ -172,8 +178,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     public void setPlatforms() {
         platforms = new ArrayList<>();
-        platforms.add(new Platform(-10, floorY, 1000, floorH, this, mario));
-        platforms.add(new Platform(300 + 140, 365, 30, 525 - 440, this, mario));
+        platforms.add(new Platform(-10, floorY, 1000, floorH, this, players.get(playerIndex)));
+        platforms.add(new Platform(300 + 140, 365, 30, 525 - 440, this, players.get(playerIndex)));
 
 
         for (Platform platform : platforms) {
@@ -235,12 +241,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public Mario getMario() {
-        return mario;
+        return players.get(playerIndex);
     }
 
-    public void setMario(Mario mario) {
-        this.mario = mario;
-    }
+//    //public void setMario(Mario mario) {
+//        this.mario = mario;
+//    }
 
 
     public void setBackground(Image background) {
