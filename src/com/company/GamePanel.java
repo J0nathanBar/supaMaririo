@@ -97,7 +97,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             c.drawCreature(g);
         }
 
-        // mario.drawCreature(g);
+
         for (Mario mario:players
              ) {
             if(mario != null)
