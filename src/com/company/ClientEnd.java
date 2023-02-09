@@ -91,7 +91,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
             if (o instanceof Data) {
                 d = (Data) o;
-                System.out.println(d);
+                System.out.println("recieved: " + d);
             } else {
                 if (o instanceof String) {
                     if (o.equals("Add Player")) {
