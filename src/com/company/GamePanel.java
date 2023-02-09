@@ -213,8 +213,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             // instead of the "same" object p1
 
 
-        //    d1 = new Data(mario.getHp(), mario.getX(), mario.getY(), levelX);
-          //  objectOutputStream.writeObject(d1);
+//            d1 = new Data(
+//            objectOutputStream.writeObject(d1);
 
             d2 = (Data) objectInputStream.readObject();
 

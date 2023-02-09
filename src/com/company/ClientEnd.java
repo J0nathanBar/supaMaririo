@@ -61,6 +61,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("running");
         while (true) {
             try {
                 Constants.sleep(1);
@@ -90,6 +91,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
             if (o instanceof Data) {
                 d = (Data) o;
+                System.out.println(d);
             } else {
                 if (o instanceof String) {
                     if (o.equals("Add Player")) {
@@ -111,6 +113,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
     private void sendData() throws IOException {
         Data d = null;
+        System.out.println("called send data");
 
 //        if (reqPause) {
 //            if (Map.pauseFlag == 1) {
@@ -129,6 +132,7 @@ public class ClientEnd extends JPanel implements Runnable {
             );
             if (d != null) {
               objectOutputStream.writeObject(d);
+                System.out.println(d);
          }
      //   }
     }
@@ -137,10 +141,12 @@ public class ClientEnd extends JPanel implements Runnable {
         ClientEnd e = new ClientEnd();
         JFrame f = new JFrame("SuperMario");
         Object obj;
+
         // Reads amount of players connected from server
         obj = e.objectInputStream.readObject();
         if (obj instanceof Integer) {
             int playerCount = (Integer) obj;
+            System.out.println("istg");
             e.panel = new GamePanel(500,828,e.playerIndex);
             f.add(e.panel);
             f.setSize(828,500);
@@ -148,6 +154,7 @@ public class ClientEnd extends JPanel implements Runnable {
             f.setResizable(false);
             f.setVisible(true);
             f.setFocusable(false);
+            System.out.println("got to here");
             e.t.start();
         }
     }

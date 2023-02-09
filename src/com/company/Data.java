@@ -72,5 +72,17 @@ public class Data implements Serializable {
     public void setDeadMonsters(ArrayList<Integer> deadMonsters) {
         this.deadMonsters = deadMonsters;
     }
+
+    @Override
+    public String toString() {
+        return "Data{" +
+                "marioX=" + marioX +
+                ", marioY=" + marioY +
+                ", levelX=" + levelX +
+                ", hp=" + hp +
+                ", playerIndex=" + playerIndex +
+                ", deadMonsters=" + deadMonsters +
+                '}';
+    }
 }
 
