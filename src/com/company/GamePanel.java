@@ -40,8 +40,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
        // mario = new Mario(this);
         players = new ArrayList<>();
         //players.set(playerIndex,new Mario(this));
-        if(playerIndex ==0)
+        if(playerIndex ==0){
             players.add(new Mario(this));
+            players.add(null);}
         else {
             players.add(null);
             players.add(new Mario(this));
