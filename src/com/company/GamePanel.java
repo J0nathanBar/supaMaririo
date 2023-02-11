@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         this.playerIndex = playerIndex;
        // mario = new Mario(this);
         players = new ArrayList<>(2);
+
         players.set(playerIndex,new Mario(this));
 
         //players.set(playerIndex,new Mario(this));
@@ -89,6 +90,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         for (Creature c : monsters) {
             c.drawCreature(g);
         }
+      //  System.out.println(playerIndex);
+        //players.set(playerIndex,new Mario(this));
+        players.get(playerIndex).start();
+
 
 
         for (Mario mario:players

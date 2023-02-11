@@ -23,17 +23,17 @@ public class Mario extends Creature {
         height = 600;
 
     }
-
-    public Mario(int x, int y, int size, int width, int height, GamePanel panel) {
-        this.panel = panel;
+    public Mario(int x,int y,Byte hp,GamePanel panel){
         defaultValues();
-        this.width = width;
-        this.height = height;
-        this.x = x;
+        this.x= x;
         this.y = y;
-        this.size = size;
-        // run();
+        this.hp = hp;
+        this.panel = panel;
+        size = 32;
+        width = 600;
+        height = 600;
     }
+
 
     protected void defaultValues() {
         initArr();

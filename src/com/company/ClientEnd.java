@@ -74,6 +74,8 @@ public class ClientEnd extends JPanel implements Runnable {
             Data dRecieved = null;
             dRecieved = getData(); // Reliading data from input stream
 
+
+
         }
     }
 
