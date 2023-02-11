@@ -38,9 +38,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         System.out.println("eggies");
         this.playerIndex = playerIndex;
        // mario = new Mario(this);
-        players = new ArrayList<>(2);
-
-        players.set(playerIndex,new Mario(this));
+        players = new ArrayList<>();
+        //players.set(playerIndex,new Mario(this));
+        if(playerIndex ==0)
+            players.add(new Mario(this));
+        else {
+            players.add(null);
+            players.add(new Mario(this));
+        }
 
         //players.set(playerIndex,new Mario(this));
         Timer t = new Timer(5, this);
@@ -90,10 +95,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         for (Creature c : monsters) {
             c.drawCreature(g);
         }
-      //  System.out.println(playerIndex);
-        //players.set(playerIndex,new Mario(this));
-        players.get(playerIndex).start();
-
 
 
         for (Mario mario:players

@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -73,7 +74,25 @@ public class ClientEnd extends JPanel implements Runnable {
             Constants.sleep(1);
             Data dRecieved = null;
             dRecieved = getData(); // Reliading data from input stream
+            ArrayList<Mario> arr = panel.getPlayers();
 
+            Byte index = dRecieved.getPlayerIndex();
+            int x =dRecieved.getLevelX();
+            int y =dRecieved.getMarioY();
+            Byte hp =dRecieved.getHp();
+            if (arr.size() < index){
+                arr.add( new Mario(x,y,hp,panel));
+                arr.get(index).start();
+            }
+            else if(arr.get(index)==null){
+                arr.set( index,new Mario(x,y,hp,panel));
+                arr.get(index).start();
+            }
+
+            else{ Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
+                m.setX(x);
+                m.setY(y);
+                m.setHp(hp);}
 
 
         }
