@@ -46,7 +46,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             players.add(null);
             players.add(new Mario(this));
         }
-
+        players.get(playerIndex).start();
         //players.set(playerIndex,new Mario(this));
         Timer t = new Timer(5, this);
         addKeyListener(this);

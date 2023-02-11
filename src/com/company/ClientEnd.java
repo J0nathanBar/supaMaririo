@@ -80,6 +80,7 @@ public class ClientEnd extends JPanel implements Runnable {
             int x =dRecieved.getLevelX();
             int y =dRecieved.getMarioY();
             Byte hp =dRecieved.getHp();
+            System.out.println("arr size: " + arr.size());
             if (arr.size() < index){
                 arr.add( new Mario(x,y,hp,panel));
                 arr.get(index).start();
@@ -153,7 +154,7 @@ public class ClientEnd extends JPanel implements Runnable {
             );
             if (d != null) {
               objectOutputStream.writeObject(d);
-                System.out.println(d);
+                System.out.println("seding: " +d);
          }
      //   }
     }
