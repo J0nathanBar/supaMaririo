@@ -77,7 +77,7 @@ public class ClientEnd extends JPanel implements Runnable {
             ArrayList<Mario> arr = panel.getPlayers();
 
             Byte index = dRecieved.getPlayerIndex();
-            int x =dRecieved.getLevelX();
+            int x =dRecieved.getMarioX() - dRecieved.getLevelX();
             int y =dRecieved.getMarioY();
             Byte hp =dRecieved.getHp();
             System.out.println("arr size: " + arr.size());

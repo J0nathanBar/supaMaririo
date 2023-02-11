@@ -96,8 +96,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         for (Creature c : monsters) {
             c.drawCreature(g);
         }
-
-
         for (Mario mario:players
              ) {
             if(mario != null)
@@ -119,6 +117,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         int code = e.getKeyCode();
         if (code == KeyEvent.VK_RIGHT) {
             players.get(playerIndex).setDir(true);
+            System.out.println("im moving you piece of shite");
             if (canMove(1)) {
                 players.get(playerIndex).moveX();
 
@@ -153,10 +152,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         } else if (code == KeyEvent.VK_DOWN) {
             players.get(playerIndex).moveControl(-1);
         }
-
         repaint();
-
-
     }
 
     @Override
