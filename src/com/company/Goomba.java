@@ -6,9 +6,10 @@ import java.util.ArrayList;
 
 public class Goomba extends Creature {
     private int ogX, ogY;
+    Mario mario;
     boolean alive;
 
-    public Goomba(GamePanel panel, int x, int y) {
+    public Goomba(GamePanel panel,Mario mario, int x, int y) {
         this.x = x;
         this.y = y;
         this.size = 24;
@@ -20,6 +21,7 @@ public class Goomba extends Creature {
         updateRect();
         initArr();
         alive = true;
+        this.mario = mario;
 
 
     }
@@ -71,15 +73,16 @@ public class Goomba extends Creature {
         // System.out.println("goomba X: " + this.x);
     }
 
-    public void checkCollision(Mario mario) {
-        if (mario.getRect().intersects(this.rect)) {
-            if (mario.getRect().y + mario.getRect().height < this.rect.y + this.rect.height/2) {
-                // Mario has jumped on the Goomba
-                System.out.println("goombdead");
-            } else {
-                killGoomba();
-            }
-        }
+    public void checkCollision() {
+        Rectangle topOfGoomba = new Rectangle(rect.x, rect.y, rect.width, rect.height / 2);
+        boolean collidesWithTop = topOfGoomba.intersects(mario.getRect());
+
+        // Check if the other rectangle is above this rectangle
+        boolean otherIsAbove = mario.getRect().y + mario.getRect().height < rect.y + rect.height / 2;
+        if (collidesWithTop && otherIsAbove)
+            killGoomba();
+        else if (collidesWithTop)
+            System.out.println("mario dead");
     }
 
 
@@ -100,7 +103,7 @@ public class Goomba extends Creature {
                 animate(0, 1);
             else animate(2,2);
          //   walk(ogX - 40, ogX + 40);
-           checkCollision(panel.getMario());
+           checkCollision();
             try {
                 sleep(60);
             } catch (Exception e) {

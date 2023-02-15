@@ -22,8 +22,11 @@ public class Mario extends Creature {
         width = 600;
         height = 600;
 
+
     }
-    public Mario(int x,int y,Byte hp,GamePanel panel){
+
+
+    public Mario(int x, int y, Byte hp, GamePanel panel){
         defaultValues();
         this.x= x;
         this.y = y;

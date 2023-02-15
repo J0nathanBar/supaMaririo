@@ -14,6 +14,8 @@ public abstract class Creature extends Thread {
     protected Rectangle rect;
     protected GamePanel panel;
 
+
+
     public Rectangle getRect() {
         return rect;
     }
@@ -155,6 +157,16 @@ public abstract class Creature extends Thread {
     }
 
     public void updateRect() {
+      if(rect!=null){
+        if (dir)
+            rect.setBounds(x, y, size, size);
+        else
+            rect.setBounds(x - size / 2, y, size, size);
+    }
+      else createRect();
+    }
+
+    public void createRect(){
         if (dir)
             rect = new Rectangle(x, y, size, size);
         else rect = new Rectangle(x - size / 2, y, size, size);

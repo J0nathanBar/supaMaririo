@@ -55,31 +55,16 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         setFocusTraversalKeysEnabled(false);
         requestFocusInWindow();
         background = new ImageIcon("level1.png").getImage();
-      //  mario.start();
         setPlatforms();
         setMonsters();
         players.get(playerIndex).start();
-     //   connectToServer(port);
     }
-
-    public void connectToServer(int port) throws IOException {
-        socket = new Socket("localhost", port);
-
-        inputStream = socket.getInputStream();
-        outputStream = socket.getOutputStream();
-
-        objectInputStream = new ObjectInputStream(inputStream);
-        objectOutputStream = new ObjectOutputStream(outputStream);
-
-    }
-
     public ArrayList<Creature> getMonsters() {
         return monsters;
     }
-
     public void setMonsters() {
         monsters = new ArrayList<>();
-        monsters.add(new Goomba(this, 200, 200));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex),200, 180));
         for (Creature c : monsters) {
             c.start();
 
@@ -119,11 +104,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             players.get(playerIndex).setDir(true);
 
             if (canMove(1)) {
-                System.out.println("im moving you piece of shite");
                 players.get(playerIndex).moveX();
-
-
-                if (players.get(playerIndex).getX() >= 300 && levelX > -1800) {
+                if(players.get(playerIndex).getX() < 300){
+                    players.get(playerIndex).updateRect();
+                }
+               else if ( levelX > -1800) {
                  //   System.out.println("X: " + levelX);
                     levelX -= players.get(playerIndex).dx;
                   //  players.get(playerIndex).updateRect();

@@ -83,7 +83,7 @@ public class ClientEnd extends JPanel implements Runnable {
           //  System.out.println("arr size: " + arr.size());
            if(arr.get(index)==null){
                 arr.set( index,new Mario(x,y,hp,panel));
-                arr.get(index).start();
+             //   arr.get(index).start();
             }
 
             else{ Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
