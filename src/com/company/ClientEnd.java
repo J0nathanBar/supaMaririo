@@ -80,7 +80,7 @@ public class ClientEnd extends JPanel implements Runnable {
             int x =dRecieved.getMarioX() - dRecieved.getLevelX();
             int y =dRecieved.getMarioY();
             Byte hp =dRecieved.getHp();
-            System.out.println("arr size: " + arr.size());
+          //  System.out.println("arr size: " + arr.size());
            if(arr.get(index)==null){
                 arr.set( index,new Mario(x,y,hp,panel));
                 arr.get(index).start();
@@ -109,7 +109,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
             if (o instanceof Data) {
                 d = (Data) o;
-                System.out.println("recieved: " + d);
+             //   System.out.println("recieved: " + d);
             } else {
                 if (o instanceof String) {
                     if (o.equals("Add Player")) {
@@ -131,7 +131,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
     private void sendData() throws IOException {
         Data d = null;
-        System.out.println("called send data");
+  //      System.out.println("called send data");
 
 //        if (reqPause) {
 //            if (Map.pauseFlag == 1) {
@@ -150,7 +150,7 @@ public class ClientEnd extends JPanel implements Runnable {
             );
             if (d != null) {
               objectOutputStream.writeObject(d);
-                System.out.println("seding: " +d);
+              //  System.out.println("seding: " +d);
          }
      //   }
     }

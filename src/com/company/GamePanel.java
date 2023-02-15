@@ -47,7 +47,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             players.add(null);
             players.add(new Mario(this));
         }
-        players.get(playerIndex).start();
+
         //players.set(playerIndex,new Mario(this));
         Timer t = new Timer(5, this);
         addKeyListener(this);
@@ -58,7 +58,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
       //  mario.start();
         setPlatforms();
         setMonsters();
-
+        players.get(playerIndex).start();
      //   connectToServer(port);
     }
 
@@ -117,15 +117,17 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         int code = e.getKeyCode();
         if (code == KeyEvent.VK_RIGHT) {
             players.get(playerIndex).setDir(true);
-            System.out.println("im moving you piece of shite");
+
             if (canMove(1)) {
+                System.out.println("im moving you piece of shite");
                 players.get(playerIndex).moveX();
 
 
                 if (players.get(playerIndex).getX() >= 300 && levelX > -1800) {
                  //   System.out.println("X: " + levelX);
                     levelX -= players.get(playerIndex).dx;
-                    players.get(playerIndex).updateRect();
+                  //  players.get(playerIndex).updateRect();
+
                     for (Platform p : platforms) {
                         p.moveX();
                         p.updateRect();
@@ -133,8 +135,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                     for (Creature c:monsters){
                          c.moveX();
                         c.updateRect();
-                        if (c.getX() < 0)
-                            monsters.remove(c);
+
+                    }
+                    for (Mario m:players) {
+                        if(m!=null && m!= players.get(playerIndex))
+                            m.setX(m.getX()-m.dx);
                     }
                 }
             }
