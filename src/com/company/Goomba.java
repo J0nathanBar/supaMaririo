@@ -89,7 +89,7 @@ public class Goomba extends Creature {
 
 
 
-    void killGoomba() {
+   public void killGoomba() {
         alive = false;
     }
 

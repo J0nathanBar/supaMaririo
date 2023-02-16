@@ -80,17 +80,21 @@ public class ClientEnd extends JPanel implements Runnable {
             int x =dRecieved.getMarioX() - dRecieved.getLevelX();
             int y =dRecieved.getMarioY();
             Byte hp =dRecieved.getHp();
-          //  System.out.println("arr size: " + arr.size());
            if(arr.get(index)==null){
                 arr.set( index,new Mario(x,y,hp,panel));
-             //   arr.get(index).start();
             }
 
             else{ Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
                 m.setX(x);
                 m.setY(y);
                 m.setHp(hp);}
-
+            ArrayList<Integer> dead = dRecieved.getDeadMonsters();
+            for (int i:dead) {
+                Creature c = panel.getMonsters().get(i);
+                if (c instanceof Goomba){
+                     ((Goomba) c).killGoomba();
+                }
+            }
 
         }
     }
@@ -146,8 +150,14 @@ public class ClientEnd extends JPanel implements Runnable {
 //            // Send current direction to all other clients
 
             Mario thisMario = panel.getPlayers().get(playerIndex);
-            d = new Data(thisMario.getX(),thisMario.getY(),panel.getLevelX(),thisMario.getHp(),playerIndex
+            ArrayList<Integer> monsters = new ArrayList<>();
+        for (int i = 0; i <panel.getMonsters().size() ; i++) {
+            if (!panel.getMonsters().get(i).isAlive())
+                monsters.add(i);
+        }
+            d = new Data(thisMario.getX(),thisMario.getY(),panel.getLevelX(),thisMario.getHp(),playerIndex,monsters
             );
+
             if (d != null) {
               objectOutputStream.writeObject(d);
               //  System.out.println("seding: " +d);

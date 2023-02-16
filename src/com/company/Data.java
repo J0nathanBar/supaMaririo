@@ -13,10 +13,11 @@ public class Data implements Serializable {
         this.playerIndex = playerIndex;
     }
 
-    public Data(Integer marioX, Integer marioY, Integer levelX, Byte hp, Byte playerIndex) {
+    public Data(Integer marioX, Integer marioY, Integer levelX, Byte hp, Byte playerIndex,ArrayList<Integer> deadMonsters) {
         this.marioX = marioX;
         this.marioY = marioY;
         this.levelX = levelX;
+        this.deadMonsters = deadMonsters;
         this.hp = hp;
         this.playerIndex = playerIndex;
     }
