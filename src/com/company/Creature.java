@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public abstract class Creature extends Thread {
     protected int x, y, dx, dy, size, index, width, height;
+    protected boolean alive;
     Byte hp;
     protected final double gravity = 0.6;
     protected boolean standing;
@@ -188,5 +189,12 @@ public abstract class Creature extends Thread {
             g.drawImage(img, x, y, size, size, null);
         else g.drawImage(img, x + size / 2, y, -size, size, null);
 
+    }
+    public boolean isGAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class Goomba extends Creature {
     private int ogX, ogY;
-    Mario mario;
-    boolean alive;
+    private Mario mario;
+
 
     public Goomba(GamePanel panel,Mario mario, int x, int y) {
         this.x = x;
@@ -91,6 +91,7 @@ public class Goomba extends Creature {
 
    public void killGoomba() {
         alive = false;
+       System.out.println("goomba dead");
     }
 
     @Override
@@ -99,11 +100,13 @@ public class Goomba extends Creature {
             super.run();
             fall();
           //  System.out.println("here");
-            if (alive)
+            if (alive){
                 animate(0, 1);
+                checkCollision();
+            }
             else animate(2,2);
          //   walk(ogX - 40, ogX + 40);
-           checkCollision();
+
             try {
                 sleep(60);
             } catch (Exception e) {
@@ -116,5 +119,7 @@ public void fall(){
         y += 10;
     }
 }
+
+
 
 }
