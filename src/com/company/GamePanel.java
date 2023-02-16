@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class GamePanel extends JPanel implements KeyListener, ActionListener, Runnable {
     private Mario mario;
     private Image background;
+    private JLabel hpLabel;
     private int height, width, levelX;
     private ArrayList<Platform> platforms;
     private ArrayList<Mario> players;
@@ -58,6 +59,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         setPlatforms();
         setMonsters();
         players.get(playerIndex).start();
+
+        hpLabel = new JLabel("HP: 3");
+        hpLabel.setBounds(10, 10, 100, 20);
+        add(hpLabel);
     }
     public ArrayList<Creature> getMonsters() {
         return monsters;
@@ -100,6 +105,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
+        String s = "hp: " + players.get(playerIndex).getHp();
+        hpLabel.setText(s);
         if (code == KeyEvent.VK_RIGHT) {
             players.get(playerIndex).setDir(true);
 
@@ -187,44 +194,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     @Override
     public void run() {
-
-        Data d1, d2;
-        ;
-
-        try {
-            // mind the gap  MS 29-7-2022
-            // update 11-8-2022
-            // Must use a copy of p1
-            // To send each time a new created object
-            // instead of the "same" object p1
-
-
-//            d1 = new Data(
-//            objectOutputStream.writeObject(d1);
-
-            d2 = (Data) objectInputStream.readObject();
-
-            //System.out.println(d2);
-
-        } catch (IOException e) {
-            try {
-                socket.close();
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+     ///   System.out.println("gegg");
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-            System.exit(0);
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
     }
 
     public Mario getMario() {

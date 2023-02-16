@@ -13,6 +13,8 @@ public class Mario extends Creature {
     private boolean jumping, canJump,controlled;
     private int jumpcount;
 
+
+
     public Mario(GamePanel panel) {
         defaultValues();
         this.panel = panel;
@@ -21,6 +23,7 @@ public class Mario extends Creature {
         size = 32;
         width = 600;
         height = 600;
+        alive = true;
 
 
     }
@@ -65,17 +68,6 @@ public class Mario extends Creature {
         images.add(new ImageIcon("mario_stand.png").getImage());
         images.add(new ImageIcon("mario_run.png").getImage());
     }
-
-
-//   public void drawMario(Graphics g){
-//       g.drawRect((int)rect.getX(),(int)rect.getY(),size,size);
-//        Image img =images.get(index);
-//        if (dir)
-//            g.drawImage(img,x,y,size,size,null);
-//        else g.drawImage(img,x+size/2,y,-size,size,null);
-//
-//   }
-
     @Override
     public void moveX() {
 
@@ -84,22 +76,15 @@ public class Mario extends Creature {
         }
         rect = new Rectangle(x, y, width, height);
         animate(0, 1);
-
-
     }
-
-
     @Override
     public boolean interacts(Creature c) {
         return false;
     }
-
     @Override
     public boolean touches(Platform p) {
         return rect.intersects(p.getRect());
     }
-
-
     @Override
     public void run() {
         while (true) {
@@ -109,10 +94,7 @@ public class Mario extends Creature {
             try {
                 sleep(60);
             } catch (Exception e) {
-
             }
-
-
         }
     }
 
@@ -192,5 +174,11 @@ public class Mario extends Creature {
 
     public void setControlled(boolean controlled) {
         this.controlled = controlled;
+    }
+    public void marioDie(){
+        hp--;
+        if(hp >0 ){
+        x = 0;
+        y = 295;}
     }
 }

@@ -81,8 +81,10 @@ public class Goomba extends Creature {
         boolean otherIsAbove = mario.getRect().y + mario.getRect().height < rect.y + rect.height / 2;
         if (collidesWithTop && otherIsAbove)
             killGoomba();
-        else if (collidesWithTop)
+        else if (collidesWithTop){
             System.out.println("mario dead");
+         //   mario.marioDie();
+        }
     }
 
 
