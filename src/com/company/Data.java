@@ -25,12 +25,11 @@ public class Data implements Serializable {
         this.deadMonsters = deadMonsters;
         this.hp = hp;
         this.playerIndex = playerIndex;
+        gameStatus = Constants.noChange;
     }
 
 
-    public Data(Data data) {
-        this.playerIndex = data.playerIndex;
-    }
+
 
     public Data(Byte playerIndex, Byte gameStatus) {
         this.playerIndex = playerIndex;
