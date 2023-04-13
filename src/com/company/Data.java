@@ -16,6 +16,8 @@ public class Data implements Serializable {
    private ArrayList<Integer> deadMonsters;
     public Data(Byte playerIndex) {
         this.playerIndex = playerIndex;
+        gameStatus = Constants.noChange;
+
     }
 
     public Data(Integer marioX, Integer marioY, Integer levelX, Byte hp, Byte playerIndex,ArrayList<Integer> deadMonsters) {

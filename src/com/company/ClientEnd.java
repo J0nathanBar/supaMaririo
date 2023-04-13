@@ -82,42 +82,43 @@ public class ClientEnd extends JPanel implements Runnable {
                 e.printStackTrace();
             }
             Constants.sleep(1);
-            Data dRecieved = null;
+            Data dRecieved;
             dRecieved = getData(); // Reliading data from input stream
-            if (dRecieved.getGameStatus() == Constants.pauseGame)
-                System.out.println("pause please");
-            if (dRecieved.getGameStatus() != null) {
-                System.out.println("recv status req");
+            if (dRecieved != null) {
+                if (dRecieved.getGameStatus() == Constants.pauseGame)
+                    System.out.println("pause please");
+                if (dRecieved.getGameStatus() != null) {
+                    System.out.println("recv status req");
 
-                if (dRecieved.getGameStatus() == Constants.resumeGame){
-                    System.out.println("pause");
-                    panel.setPause(true);}
-                else {
-                    System.out.println("resume");
-                    panel.setPause(false);
-                    panel.resumeGame();
-                }
-            }
-            else if (dRecieved.getMarioX()!=null){
-                ArrayList<Mario> arr = panel.getPlayers();
+                    if (dRecieved.getGameStatus() == Constants.resumeGame) {
+                        System.out.println("pause");
+                        panel.setPause(true);
+                    } else {
+                        System.out.println("resume");
+                        panel.setPause(false);
+                        panel.resumeGame();
+                    }
+                } else if (dRecieved.getMarioX() != null) {
+                    ArrayList<Mario> arr = panel.getPlayers();
 
-                Byte index = dRecieved.getPlayerIndex();
-                int x = dRecieved.getMarioX() - dRecieved.getLevelX();
-                int y = dRecieved.getMarioY();
-                Byte hp = dRecieved.getHp();
-                if (arr.get(index) == null) {
-                    arr.set(index, new Mario(x, y, hp, panel));
-                } else {
-                    Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
-                    m.setX(x + panel.getLevelX());
-                    m.setY(y);
-                    m.setHp(hp);
-                }
-                ArrayList<Integer> dead = dRecieved.getDeadMonsters();
-                for (int i : dead) {
-                    Creature c = panel.getMonsters().get(i);
-                    if (c instanceof Goomba) {
-                        ((Goomba) c).killGoomba();
+                    Byte index = dRecieved.getPlayerIndex();
+                    int x = dRecieved.getMarioX() - dRecieved.getLevelX();
+                    int y = dRecieved.getMarioY();
+                    Byte hp = dRecieved.getHp();
+                    if (arr.get(index) == null) {
+                        arr.set(index, new Mario(x, y, hp, panel));
+                    } else {
+                        Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
+                        m.setX(x + panel.getLevelX());
+                        m.setY(y);
+                        m.setHp(hp);
+                    }
+                    ArrayList<Integer> dead = dRecieved.getDeadMonsters();
+                    for (int i : dead) {
+                        Creature c = panel.getMonsters().get(i);
+                        if (c instanceof Goomba) {
+                            ((Goomba) c).killGoomba();
+                        }
                     }
                 }
             }
