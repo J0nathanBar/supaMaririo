@@ -148,7 +148,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
     private void sendData() throws IOException {
         Data d = null;
-
+        System.out.println("wtf why areny ypu showing uppp");
         if (reqPause) {
             if (panel.isPause()) {
                 d = new Data(playerIndex, Constants.pauseGame);
