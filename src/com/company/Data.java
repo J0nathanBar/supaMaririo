@@ -7,7 +7,12 @@ public class Data implements Serializable {
     private static final long serialVersionUID = 1L;
 
   private Integer marioX,marioY,levelX;
-   private Byte hp,playerIndex;
+   private Byte hp;
+    private Byte playerIndex;
+
+
+
+    private Byte gameStatus;
    private ArrayList<Integer> deadMonsters;
     public Data(Byte playerIndex) {
         this.playerIndex = playerIndex;
@@ -22,8 +27,14 @@ public class Data implements Serializable {
         this.playerIndex = playerIndex;
     }
 
+
     public Data(Data data) {
         this.playerIndex = data.playerIndex;
+    }
+
+    public Data(Byte playerIndex, Byte gameStatus) {
+        this.playerIndex = playerIndex;
+        this.gameStatus = gameStatus;
     }
 
     public Integer getMarioX() {
@@ -85,5 +96,14 @@ public class Data implements Serializable {
                 ", deadMonsters=" + deadMonsters +
                 '}';
     }
+
+    public Byte getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(Byte gameStatus) {
+        this.gameStatus = gameStatus;
+    }
 }
+
 

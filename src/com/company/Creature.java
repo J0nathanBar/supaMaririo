@@ -16,7 +16,6 @@ public abstract class Creature extends Thread {
     protected GamePanel panel;
 
 
-
     public Rectangle getRect() {
         return rect;
     }
@@ -158,16 +157,15 @@ public abstract class Creature extends Thread {
     }
 
     public void updateRect() {
-      if(rect!=null){
-        if (dir)
-            rect.setBounds(x, y, size, size);
-        else
-            rect.setBounds(x - size / 2, y, size, size);
-    }
-      else createRect();
+        if (rect != null) {
+            if (dir)
+                rect.setBounds(x, y, size, size);
+            else
+                rect.setBounds(x - size / 2, y, size, size);
+        } else createRect();
     }
 
-    public void createRect(){
+    public void createRect() {
         if (dir)
             rect = new Rectangle(x, y, size, size);
         else rect = new Rectangle(x - size / 2, y, size, size);
@@ -175,6 +173,14 @@ public abstract class Creature extends Thread {
 
     @Override
     public void run() {
+        synchronized (this) {
+            if (panel.isPause()) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
         super.run();
         updateRect();
 
@@ -190,6 +196,7 @@ public abstract class Creature extends Thread {
         else g.drawImage(img, x + size / 2, y, -size, size, null);
 
     }
+
     public boolean isGAlive() {
         return alive;
     }

@@ -115,7 +115,8 @@ public class Platform extends Thread {
         }
 
     }
-    public void monsterStands(Creature creature){
+
+    public void monsterStands(Creature creature) {
 //        Rectangle creatureFeet = new Rectangle(creature.getRect().x, creature.getRect().y + creature.getRect().height, creature.getRect().width, 1);
 //
 //        // Check if the creature's feet intersect with the platform
@@ -145,16 +146,24 @@ public class Platform extends Thread {
         }
     }
 
-
     @Override
     public void run() {
+        synchronized (this) {
+            if (panel.isPause()) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
         super.run();
+
         while (true) {
             updateRect();
             standsOn();
-           for (Creature c:panel.getMonsters()){
-               monsterStands(c);
-           }
+            for (Creature c : panel.getMonsters()) {
+                monsterStands(c);
+            }
             panel.repaint();
         }
     }

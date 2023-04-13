@@ -98,6 +98,7 @@ public class Goomba extends Creature {
 
     @Override
     public void run() {
+
         while (alive || x >0) {
             super.run();
             fall();

@@ -10,9 +10,8 @@ import java.util.ArrayList;
 
 public class Mario extends Creature {
 
-    private boolean jumping, canJump,controlled;
+    private boolean jumping, canJump, controlled;
     private int jumpcount;
-
 
 
     public Mario(GamePanel panel) {
@@ -29,9 +28,9 @@ public class Mario extends Creature {
     }
 
 
-    public Mario(int x, int y, Byte hp, GamePanel panel){
+    public Mario(int x, int y, Byte hp, GamePanel panel) {
         defaultValues();
-        this.x= x;
+        this.x = x;
         this.y = y;
         this.hp = hp;
         this.panel = panel;
@@ -68,6 +67,7 @@ public class Mario extends Creature {
         images.add(new ImageIcon("mario_stand.png").getImage());
         images.add(new ImageIcon("mario_run.png").getImage());
     }
+
     @Override
     public void moveX() {
 
@@ -77,17 +77,28 @@ public class Mario extends Creature {
         rect = new Rectangle(x, y, width, height);
         animate(0, 1);
     }
+
     @Override
     public boolean interacts(Creature c) {
         return false;
     }
+
     @Override
     public boolean touches(Platform p) {
         return rect.intersects(p.getRect());
     }
+
     @Override
     public void run() {
         while (true) {
+            synchronized (this) {
+                if (panel.isPause()) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
             super.run();
             setStanding();
             checkJumpStatus();
@@ -146,7 +157,8 @@ public class Mario extends Creature {
         }
         setStanding(false);
     }
-    public void checkJumpStatus(){
+
+    public void checkJumpStatus() {
         if (!jumping && !standing) {
             y += 10;
             jumpcount = 0;
@@ -175,10 +187,12 @@ public class Mario extends Creature {
     public void setControlled(boolean controlled) {
         this.controlled = controlled;
     }
-    public void marioDie(){
+
+    public void marioDie() {
         hp--;
-        if(hp >0 ){
-        x = 0;
-        y = 295;}
+        if (hp > 0) {
+            x = 0;
+            y = 295;
+        }
     }
 }

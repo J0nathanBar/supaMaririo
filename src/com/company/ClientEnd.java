@@ -22,10 +22,19 @@ public class ClientEnd extends JPanel implements Runnable {
     OutputStream outputStream;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
-   // Map m;
+    // Map m;
     GamePanel panel;
     Thread t;
     byte playerIndex;
+
+    public static boolean isReqPause() {
+        return reqPause;
+    }
+
+    public static void setReqPause(boolean reqPause) {
+        ClientEnd.reqPause = reqPause;
+    }
+
     static boolean reqPause = false;
 
     public ClientEnd() throws IOException {
@@ -52,6 +61,7 @@ public class ClientEnd extends JPanel implements Runnable {
                 //System.out.println(d);
             }
 
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -74,35 +84,38 @@ public class ClientEnd extends JPanel implements Runnable {
             Constants.sleep(1);
             Data dRecieved = null;
             dRecieved = getData(); // Reliading data from input stream
-            ArrayList<Mario> arr = panel.getPlayers();
+            if (dRecieved.getGameStatus() != null) {
+                if (dRecieved.getGameStatus() == Constants.resumeGame)
+                    panel.setPause(true);
+                else {
+                    panel.setPause(false);
+                    panel.resumeGame();
+                }
+            } else {
+                ArrayList<Mario> arr = panel.getPlayers();
 
-            Byte index = dRecieved.getPlayerIndex();
-            int x =dRecieved.getMarioX() - dRecieved.getLevelX();
-            int y =dRecieved.getMarioY();
-            Byte hp =dRecieved.getHp();
-           if(arr.get(index)==null){
-                arr.set( index,new Mario(x,y,hp,panel));
-            }
-
-            else{ Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
-                m.setX(x+panel.getLevelX());
-                m.setY(y);
-                m.setHp(hp);}
-            ArrayList<Integer> dead = dRecieved.getDeadMonsters();
-            for (int i:dead) {
-                Creature c = panel.getMonsters().get(i);
-                if (c instanceof Goomba){
-                     ((Goomba) c).killGoomba();
+                Byte index = dRecieved.getPlayerIndex();
+                int x = dRecieved.getMarioX() - dRecieved.getLevelX();
+                int y = dRecieved.getMarioY();
+                Byte hp = dRecieved.getHp();
+                if (arr.get(index) == null) {
+                    arr.set(index, new Mario(x, y, hp, panel));
+                } else {
+                    Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
+                    m.setX(x + panel.getLevelX());
+                    m.setY(y);
+                    m.setHp(hp);
+                }
+                ArrayList<Integer> dead = dRecieved.getDeadMonsters();
+                for (int i : dead) {
+                    Creature c = panel.getMonsters().get(i);
+                    if (c instanceof Goomba) {
+                        ((Goomba) c).killGoomba();
+                    }
                 }
             }
-
         }
     }
-
-    // Sends to all clients to summon a bomb in the current player location of
-    // playerIndex
-    // Sends everyone but himself.
-
 
     private Data getData() {
         Data d = null;
@@ -113,7 +126,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
             if (o instanceof Data) {
                 d = (Data) o;
-             //   System.out.println("recieved: " + d);
+                //   System.out.println("recieved: " + d);
             } else {
                 if (o instanceof String) {
                     if (o.equals("Add Player")) {
@@ -135,36 +148,36 @@ public class ClientEnd extends JPanel implements Runnable {
 
     private void sendData() throws IOException {
         Data d = null;
-  //      System.out.println("called send data");
 
-//        if (reqPause) {
-//            if (Map.pauseFlag == 1) {
-//                d ;//= new Data(playerIndex, Constants.CODE_PAUSE);
-//                objectOutputStream.writeObject(d);
-//            } else {
-//                d = new Data(playerIndex, Constants.CODE_NOTIFY);
-//                objectOutputStream.writeObject(d);
-//            }
-//            reqPause = false;
-//        } else {
-//            // Send current direction to all other clients
+        if (reqPause) {
+            if (panel.isPause()) {
+                d = new Data(playerIndex, Constants.pauseGame);
+                objectOutputStream.writeObject(d);
+            } else {
+                d = new Data(playerIndex, Constants.resumeGame);
+                objectOutputStream.writeObject(d);
+            }
+            reqPause = false;
+        } else {
+            // Send current direction to all other clients
 
             Mario thisMario = panel.getPlayers().get(playerIndex);
             ArrayList<Integer> monsters = new ArrayList<>();
-        for (int i = 0; i <panel.getMonsters().size() ; i++) {
-            if (!panel.getMonsters().get(i).isGAlive()){
-                System.out.println("goomba " + i+" dead");
-                monsters.add(i);
+            for (int i = 0; i < panel.getMonsters().size(); i++) {
+                if (!panel.getMonsters().get(i).isGAlive()) {
+                    System.out.println("goomba " + i + " dead");
+                    monsters.add(i);
+                }
             }
-        }
-            d = new Data(thisMario.getX(),thisMario.getY(),panel.getLevelX(),thisMario.getHp(),playerIndex,monsters
+            d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters
             );
 
             if (d != null) {
-              objectOutputStream.writeObject(d);
-              //  System.out.println("seding: " +d);
-         }
-     //   }
+                objectOutputStream.writeObject(d);
+                //  System.out.println("seding: " +d);
+            }
+        }
+
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -177,9 +190,9 @@ public class ClientEnd extends JPanel implements Runnable {
         if (obj instanceof Integer) {
             int playerCount = (Integer) obj;
             System.out.println("istg");
-            e.panel = new GamePanel(500,828,e.playerIndex);
+            e.panel = new GamePanel(500, 828, e.playerIndex, e);
             f.add(e.panel);
-            f.setSize(828,500);
+            f.setSize(828, 500);
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             f.setResizable(false);
             f.setVisible(true);

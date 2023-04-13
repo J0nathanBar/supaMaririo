@@ -21,8 +21,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     private ArrayList<Mario> players;
     private ArrayList<Creature> monsters;
     private static final int floorY = 425, floorH = 100;
-    private static int pauseflag;
     private Byte playerIndex;
+    private boolean pause;
+    ClientEnd client;
+
 
     Socket socket;
     InputStream inputStream;
@@ -32,19 +34,21 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
 
     //   Graphics g;
-    public GamePanel(int height, int width,Byte playerIndex) throws IOException {
+    public GamePanel(int height, int width, Byte playerIndex, ClientEnd client) throws IOException {
         levelX = 0;
         this.height = height;
         this.width = width;
+        this.client = client;
+        pause = false;
         System.out.println("eggies");
         this.playerIndex = playerIndex;
-       // mario = new Mario(this);
+        // mario = new Mario(this);
         players = new ArrayList<>();
         //players.set(playerIndex,new Mario(this));
-        if(playerIndex ==0){
+        if (playerIndex == 0) {
             players.add(new Mario(this));
-            players.add(null);}
-        else {
+            players.add(null);
+        } else {
             players.add(null);
             players.add(new Mario(this));
         }
@@ -64,12 +68,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         hpLabel.setBounds(10, 10, 100, 20);
         add(hpLabel);
     }
+
     public ArrayList<Creature> getMonsters() {
         return monsters;
     }
+
     public void setMonsters() {
         monsters = new ArrayList<>();
-        monsters.add(new Goomba(this, getPlayers().get(playerIndex),200, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), 200, 180));
         for (Creature c : monsters) {
             c.start();
 
@@ -86,9 +92,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         for (Creature c : monsters) {
             c.drawCreature(g);
         }
-        for (Mario mario:players
-             ) {
-            if(mario != null)
+        for (Mario mario : players
+        ) {
+            if (mario != null)
                 mario.drawCreature(g);
         }
     }
@@ -96,8 +102,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     @Override
     public void keyTyped(KeyEvent e) {
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_RIGHT)
-            players.get(playerIndex).moveX();
+
         repaint();
 
     }
@@ -107,35 +112,34 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         int code = e.getKeyCode();
         String s = "hp: " + players.get(playerIndex).getHp();
         hpLabel.setText(s);
-        if (code == KeyEvent.VK_RIGHT) {
+        if (code == KeyEvent.VK_RIGHT && !pause) {
             players.get(playerIndex).setDir(true);
 
             if (canMove(1)) {
                 players.get(playerIndex).moveX();
-                if(players.get(playerIndex).getX() < 300){
+                if (players.get(playerIndex).getX() < 300) {
                     players.get(playerIndex).updateRect();
-                }
-               else if ( levelX > -1800) {
-                 //   System.out.println("X: " + levelX);
+                } else if (levelX > -1800) {
+                    //   System.out.println("X: " + levelX);
                     levelX -= players.get(playerIndex).dx;
-                  //  players.get(playerIndex).updateRect();
+                    //  players.get(playerIndex).updateRect();
 
                     for (Platform p : platforms) {
                         p.moveX();
                         p.updateRect();
                     }
-                    for (Creature c:monsters){
-                         c.moveX();
+                    for (Creature c : monsters) {
+                        c.moveX();
                         c.updateRect();
 
                     }
-                    for (Mario m:players) {
-                        if(m!=null && m!= players.get(playerIndex))
-                            m.setX(m.getX()-m.dx);
+                    for (Mario m : players) {
+                        if (m != null && m != players.get(playerIndex))
+                            m.setX(m.getX() - m.dx);
                     }
                 }
             }
-        } else if (code == KeyEvent.VK_LEFT) {
+        } else if (code == KeyEvent.VK_LEFT && !pause) {
             if (canMove(-1)) {
                 players.get(playerIndex).setDir(false);
                 players.get(playerIndex).moveX();
@@ -146,8 +150,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 players.get(playerIndex).moveY();
                 players.get(playerIndex).setCanJump(false);
             }
-        } else if (code == KeyEvent.VK_DOWN) {
+        } else if (code == KeyEvent.VK_DOWN && !pause) {
             players.get(playerIndex).moveControl(-1);
+        } else if (code == KeyEvent.VK_P) {
+            pause = !pause;
+            client.setReqPause(pause);
+            if (!pause)
+                resumeGame();
+
+
         }
         repaint();
     }
@@ -183,8 +194,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     boolean canMove(int dir) {//right:: dir =1, left: dir = -1
         for (Platform p : platforms) {
-         //   System.out.println("platfrom:: " + p.getRect().getMinX());
-        //    System.out.println("mario:: " + mario.getRect().getMaxX());
+            //   System.out.println("platfrom:: " + p.getRect().getMinX());
+            //    System.out.println("mario:: " + mario.getRect().getMaxX());
             if (p.runsTo(dir))
                 return false;
         }
@@ -194,13 +205,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     @Override
     public void run() {
-     ///   System.out.println("gegg");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+        ///   System.out.println("gegg");
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
 
     }
 
@@ -282,6 +293,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public void setObjectInputStream(ObjectInputStream objectInputStream) {
         this.objectInputStream = objectInputStream;
     }
+
     private void initPlayers(int playerCount) {
         // Start players array at 1 instead of 0
         if (players.size() == 0) {
@@ -319,13 +331,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         this.monsters = monsters;
     }
 
-    public static int getPauseflag() {
-        return pauseflag;
-    }
-
-    public static void setPauseflag(int pauseflag) {
-        GamePanel.pauseflag = pauseflag;
-    }
 
     public Byte getPlayerIndex() {
         return playerIndex;
@@ -334,4 +339,32 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public void setPlayerIndex(Byte playerIndex) {
         this.playerIndex = playerIndex;
     }
+
+    public boolean isPause() {
+        return pause;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
+    }
+
+    public void resumeGame() {
+        synchronized (players.get(playerIndex)) {
+            players.get(playerIndex).notify();
+        }
+
+        for (Creature c : monsters) {
+            synchronized (c) {
+                c.notify();
+            }
+        }
+
+        for (Platform p : platforms) {
+            synchronized (p) {
+                p.notify();
+            }
+        }
+    }
+
 }
+
