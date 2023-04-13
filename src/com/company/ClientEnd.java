@@ -85,13 +85,18 @@ public class ClientEnd extends JPanel implements Runnable {
             Data dRecieved = null;
             dRecieved = getData(); // Reliading data from input stream
             if (dRecieved.getGameStatus() != null) {
-                if (dRecieved.getGameStatus() == Constants.resumeGame)
-                    panel.setPause(true);
+                System.out.println("recv status req");
+
+                if (dRecieved.getGameStatus() == Constants.resumeGame){
+                    System.out.println("pause");
+                    panel.setPause(true);}
                 else {
+                    System.out.println("resume");
                     panel.setPause(false);
                     panel.resumeGame();
                 }
-            } else {
+            }
+            else if (dRecieved.getMarioX()!=null){
                 ArrayList<Mario> arr = panel.getPlayers();
 
                 Byte index = dRecieved.getPlayerIndex();
@@ -148,9 +153,10 @@ public class ClientEnd extends JPanel implements Runnable {
 
     private void sendData() throws IOException {
         Data d = null;
-        System.out.println("wtf why areny ypu showing uppp");
         if (reqPause) {
+            System.out.println("changing status");
             if (panel.isPause()) {
+
                 d = new Data(playerIndex, Constants.pauseGame);
                 objectOutputStream.writeObject(d);
             } else {
@@ -159,8 +165,6 @@ public class ClientEnd extends JPanel implements Runnable {
             }
             reqPause = false;
         } else {
-            // Send current direction to all other clients
-
             Mario thisMario = panel.getPlayers().get(playerIndex);
             ArrayList<Integer> monsters = new ArrayList<>();
             for (int i = 0; i < panel.getMonsters().size(); i++) {
@@ -174,7 +178,6 @@ public class ClientEnd extends JPanel implements Runnable {
 
             if (d != null) {
                 objectOutputStream.writeObject(d);
-                //  System.out.println("seding: " +d);
             }
         }
 
