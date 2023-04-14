@@ -113,7 +113,7 @@ public class ClientEnd extends JPanel implements Runnable {
                     ArrayList<Integer> dead = dRecieved.getDeadMonsters();
                     for (int i : dead) {
                         Creature c = panel.getMonsters().get(i);
-                        if (c instanceof Goomba) {
+                        if (c instanceof Goomba && c.isAlive()) {
                             ((Goomba) c).killGoomba();
                         }
                     }

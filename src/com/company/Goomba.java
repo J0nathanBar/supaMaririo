@@ -9,7 +9,7 @@ public class Goomba extends Creature {
     private Mario mario;
 
 
-    public Goomba(GamePanel panel,Mario mario, int x, int y) {
+    public Goomba(GamePanel panel, Mario mario, int x, int y) {
         this.x = x;
         this.y = y;
         this.size = 24;
@@ -74,6 +74,7 @@ public class Goomba extends Creature {
     }
 
     public void checkCollision() {
+
         Rectangle topOfGoomba = new Rectangle(rect.x, rect.y, rect.width, rect.height / 2);
         boolean collidesWithTop = topOfGoomba.intersects(mario.getRect());
 
@@ -81,34 +82,34 @@ public class Goomba extends Creature {
         boolean otherIsAbove = mario.getRect().y + mario.getRect().height < rect.y + rect.height / 2;
         if (collidesWithTop && otherIsAbove)
             killGoomba();
-        else if (collidesWithTop){
+        else if (collidesWithTop) {
             System.out.println("mario dead");
-         //   mario.marioDie();
+            //   mario.marioDie();
         }
     }
 
 
-
-
-
-   public void killGoomba() {
-        alive = false;
-       System.out.println("goomba dead");
+    public void killGoomba() {
+        if (!alive)
+            return;
+        synchronized (this) {
+            alive = false;
+            System.out.println("goomba dead");
+        }
     }
 
     @Override
     public void run() {
 
-        while (alive || x >0) {
+        while (alive || x > 0) {
             super.run();
             fall();
-          //  System.out.println("here");
-            if (alive){
+            //  System.out.println("here");
+            if (alive) {
                 animate(0, 1);
                 checkCollision();
-            }
-            else animate(2,2);
-         //   walk(ogX - 40, ogX + 40);
+            } else animate(2, 2);
+            //   walk(ogX - 40, ogX + 40);
 
             try {
                 sleep(60);
@@ -117,12 +118,12 @@ public class Goomba extends Creature {
             }
         }
     }
-public void fall(){
-    if (!standing) {
-        y += 10;
-    }
-}
 
+    public void fall() {
+        if (!standing) {
+            y += 10;
+        }
+    }
 
 
 }
