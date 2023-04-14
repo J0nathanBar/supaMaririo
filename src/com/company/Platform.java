@@ -127,7 +127,8 @@ public class Platform extends Thread {
     }
 
     public boolean runsTo(int d) {//right: d =1, left: d=-1
-
+        if (standingThis)
+            return false;
         Rectangle marioHitbox = mario.getRect();
         Rectangle platformHitbox = rect;
 
@@ -163,6 +164,9 @@ public class Platform extends Thread {
             standsOn();
             for (Creature c : panel.getMonsters()) {
                 monsterStands(c);
+                if (!standingThis && !runsTo(1) && !runsTo(0))
+                    if (Math.abs(mario.getRect().getMinY() - rect.getMaxY()) < 10)
+                        mario.setJumping(false);
             }
             panel.repaint();
         }
@@ -175,4 +179,21 @@ public class Platform extends Thread {
     public void setStandingThis(boolean standingThis) {
         this.standingThis = standingThis;
     }
+
+
+    public boolean bumpsIntoPlatform() {
+        Rectangle marioRect = mario.getRect();
+        Rectangle platformRect = rect;
+
+        boolean overlaps = marioRect.intersects(platformRect);
+
+        // Check if Mario's top edge is below the platform's bottom edge
+        if (marioRect.getMaxY() >= platformRect.getY() && marioRect.getMaxY() <= platformRect.getY() + 10 && mario.getDy() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+
 }

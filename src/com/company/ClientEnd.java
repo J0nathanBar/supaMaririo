@@ -121,7 +121,7 @@ public class ClientEnd extends JPanel implements Runnable {
                 }
             }
         }
-    }
+
 
 
     private Data getData() {
@@ -187,7 +187,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         ClientEnd e = new ClientEnd();
-        JFrame f = new JFrame("clone");
+        JFrame f = new JFrame("mario");
         Object obj;
 
         // Reads amount of players connected from server

@@ -188,6 +188,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         platforms = new ArrayList<>();
         platforms.add(new Platform(-10, floorY, 1000, floorH, this, players.get(playerIndex)));
         platforms.add(new Platform(300 + 140, 365, 30, 525 - 440, this, players.get(playerIndex)));
+       platforms.add(new Platform(150+20,300,30,30,this,players.get(playerIndex)));
 
 
         for (Platform platform : platforms) {
