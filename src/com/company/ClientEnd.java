@@ -95,26 +95,27 @@ public class ClientEnd extends JPanel implements Runnable {
                     panel.setPause(false);
                     panel.resumeGame();
                 }
-            } else if (dRecieved.getMarioX() != null) {
-                ArrayList<Mario> arr = panel.getPlayers();
+                else {
+                    ArrayList<Mario> arr = panel.getPlayers();
 
-                Byte index = dRecieved.getPlayerIndex();
-                int x = dRecieved.getMarioX() - dRecieved.getLevelX();
-                int y = dRecieved.getMarioY();
-                Byte hp = dRecieved.getHp();
-                if (arr.get(index) == null) {
-                    arr.set(index, new Mario(x, y, hp, panel));
-                } else {
-                    Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
-                    m.setX(x + panel.getLevelX());
-                    m.setY(y);
-                    m.setHp(hp);
-                }
-                ArrayList<Integer> dead = dRecieved.getDeadMonsters();
-                for (int i : dead) {
-                    Creature c = panel.getMonsters().get(i);
-                    if (c instanceof Goomba) {
-                        ((Goomba) c).killGoomba();
+                    Byte index = dRecieved.getPlayerIndex();
+                    int x = dRecieved.getMarioX() - dRecieved.getLevelX();
+                    int y = dRecieved.getMarioY();
+                    Byte hp = dRecieved.getHp();
+                    if (arr.get(index) == null) {
+                        arr.set(index, new Mario(x, y, hp, panel));
+                    } else {
+                        Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
+                        m.setX(x + panel.getLevelX());
+                        m.setY(y);
+                        m.setHp(hp);
+                    }
+                    ArrayList<Integer> dead = dRecieved.getDeadMonsters();
+                    for (int i : dead) {
+                        Creature c = panel.getMonsters().get(i);
+                        if (c instanceof Goomba) {
+                            ((Goomba) c).killGoomba();
+                        }
                     }
                 }
             }
