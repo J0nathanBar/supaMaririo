@@ -95,7 +95,7 @@ public class ClientEnd extends JPanel implements Runnable {
                     panel.setPause(false);
                     panel.resumeGame();
                 }
-                else {
+                else  {
                     ArrayList<Mario> arr = panel.getPlayers();
 
                     Byte index = dRecieved.getPlayerIndex();
@@ -186,7 +186,7 @@ public class ClientEnd extends JPanel implements Runnable {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         ClientEnd e = new ClientEnd();
-        JFrame f = new JFrame("SuperMario");
+        JFrame f = new JFrame("clone");
         Object obj;
 
         // Reads amount of players connected from server

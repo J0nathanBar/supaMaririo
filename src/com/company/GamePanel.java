@@ -125,12 +125,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                     //  players.get(playerIndex).updateRect();
 
                     for (Platform p : platforms) {
+                        synchronized (p){
                         p.moveX();
-                        p.updateRect();
+                        p.updateRect();}
                     }
                     for (Creature c : monsters) {
+                        synchronized (c){
                         c.moveX();
-                        c.updateRect();
+                        c.updateRect();}
 
                     }
                     for (Mario m : players) {

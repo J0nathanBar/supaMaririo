@@ -99,9 +99,7 @@ public class Data implements Serializable {
     }
 
     public Byte getGameStatus() {
-        if (gameStatus != null)
-            return gameStatus;
-        return Constants.noChange;
+        return gameStatus;
     }
 
     public void setGameStatus(Byte gameStatus) {
