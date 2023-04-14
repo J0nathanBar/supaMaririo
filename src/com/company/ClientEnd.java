@@ -85,13 +85,12 @@ public class ClientEnd extends JPanel implements Runnable {
             Data dRecieved;
             dRecieved = getData(); // Reliading data from input stream
             if (dRecieved != null) {
-                if (dRecieved.getGameStatus() == Constants.pauseGame)
-                    System.out.println("pause please");
 
-                if (dRecieved.getGameStatus() == Constants.resumeGame) {
+
+                if (dRecieved.getGameStatus() == Constants.pauseGame) {
                     System.out.println("pause");
                     panel.setPause(true);
-                } else {
+                } else if (dRecieved.getGameStatus()==Constants.resumeGame){
                     System.out.println("resume");
                     panel.setPause(false);
                     panel.resumeGame();
