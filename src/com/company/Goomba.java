@@ -94,6 +94,7 @@ public class Goomba extends Creature {
             return;
         synchronized (this) {
             alive = false;
+            newDeath = true;
             System.out.println("goomba dead");
         }
     }

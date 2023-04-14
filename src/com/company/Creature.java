@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public abstract class Creature extends Thread {
     protected int x, y, dx, dy, size, index, width, height;
-    protected boolean alive;
+    protected boolean alive,newDeath;
     Byte hp;
     protected final double gravity = 0.6;
     protected boolean standing;
@@ -203,5 +203,13 @@ public abstract class Creature extends Thread {
 
     public void setAlive(boolean alive) {
         this.alive = alive;
+    }
+
+    public boolean isNewDeath() {
+        return newDeath;
+    }
+
+    public void setNewDeath(boolean newDeath) {
+        this.newDeath = newDeath;
     }
 }

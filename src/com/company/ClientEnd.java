@@ -113,9 +113,10 @@ public class ClientEnd extends JPanel implements Runnable {
                     ArrayList<Integer> dead = dRecieved.getDeadMonsters();
                     for (int i : dead) {
                         Creature c = panel.getMonsters().get(i);
-                        if (c instanceof Goomba && c.isAlive()) {
+                        if (c instanceof Goomba && c.isGAlive()) {
                             ((Goomba) c).killGoomba();
                         }
+                    }
                     }
                 }
             }
@@ -169,9 +170,9 @@ public class ClientEnd extends JPanel implements Runnable {
             Mario thisMario = panel.getPlayers().get(playerIndex);
             ArrayList<Integer> monsters = new ArrayList<>();
             for (int i = 0; i < panel.getMonsters().size(); i++) {
-                if (!panel.getMonsters().get(i).isGAlive()) {
-                    System.out.println("goomba " + i + " dead");
+                if (!panel.getMonsters().get(i).isGAlive() && panel.getMonsters().get(i).isNewDeath()) {
                     monsters.add(i);
+                    panel.getMonsters().get(i).setNewDeath(false);
                 }
             }
             d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters
