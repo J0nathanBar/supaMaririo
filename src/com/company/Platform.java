@@ -7,7 +7,6 @@ import java.awt.*;
 public class Platform extends Thread {
     private int x, y, dx, width, height;
     private Rectangle rect;
-    private static final int floorY = 425, floorH = 100;
     private boolean standingThis;
     private GamePanel panel;
     private Mario mario;
@@ -23,9 +22,7 @@ public class Platform extends Thread {
         this.standingThis = false;
         rect = new Rectangle(x, y, width, height);
         this.mario = mario;
-        if (y == floorY && height == floorH) {
-            this.width += 300;
-        }
+
     }
 
     public Platform() {
@@ -107,9 +104,12 @@ public class Platform extends Thread {
 
     public void standsOn() {
 
-        if (rect.intersects(mario.getRect()) && Math.abs(rect.getMinY() - mario.getRect().getMaxY()) < 11) {
+        double distance = rect.getMinY() - mario.getRect().getMaxY();
+        if (rect.intersects(mario.getRect()) && distance > -11 && distance <= 0) {
+            // System.out.println(distance);
 
             standingThis = true;
+
         } else if (standingThis && !rect.intersects(mario.getRect())) {
             standingThis = false;
         }
@@ -162,12 +162,20 @@ public class Platform extends Thread {
         while (true) {
             updateRect();
             standsOn();
-            for (Creature c : panel.getMonsters()) {
-                monsterStands(c);
-                if (!standingThis && !runsTo(1) && !runsTo(0))
-                    if (Math.abs(mario.getRect().getMinY() - rect.getMaxY()) < 10)
-                        mario.setJumping(false);
+            if (panel.getMonsters() != null) {
+                for (Creature c : panel.getMonsters()) {
+                    monsterStands(c);
+
+                }
             }
+            if (bumpsIntoPlatform()) {
+                mario.setJumping(false);
+//                System.out.println("bumps");
+//                System.out.println("at " + x + " " + y);
+//                System.out.println("while mario at " + mario.getX() + " " + mario.getY());
+            }
+
+
             panel.repaint();
         }
     }
@@ -182,18 +190,20 @@ public class Platform extends Thread {
 
 
     public boolean bumpsIntoPlatform() {
-        Rectangle marioRect = mario.getRect();
-        Rectangle platformRect = rect;
-
-        boolean overlaps = marioRect.intersects(platformRect);
-
-        // Check if Mario's top edge is below the platform's bottom edge
-        if (marioRect.getMaxY() >= platformRect.getY() && marioRect.getMaxY() <= platformRect.getY() + 10 && mario.getDy() > 0) {
-            return true;
+        int rectBottom = rect.y + rect.height;
+        int marioTop = mario.getRect().y;
+        int overlapY = rectBottom - marioTop;
+        boolean isOnTop = overlapY >= 0 && overlapY < rect.height;
+        if (!isOnTop) {
+            return false; // rect is not on top of mario
         }
-
-        return false;
+        int overlapX = Math.min(rect.x + rect.width, mario.getRect().x + mario.getRect().width) - Math.max(rect.x, mario.getRect().x);
+        boolean isOnSameColumn = overlapX >= 0 && overlapX < rect.width;
+        if (!isOnSameColumn) {
+            return false; // rect is not on the same column as mario
+        }
+        boolean intersects = rect.intersects(mario.getRect());
+        boolean isVeryClose = Math.abs(rectBottom - marioTop) < 5; // adjust the threshold as needed
+        return intersects || isVeryClose;
     }
-
-
 }

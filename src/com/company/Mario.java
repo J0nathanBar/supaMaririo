@@ -48,7 +48,7 @@ public class Mario extends Creature {
         jumpcount = 0;
         hp = 3;
         dx = 10;
-        dy = -10;
+        dy = -20;
         dir = true;
         standing = false;
     }
@@ -70,12 +70,14 @@ public class Mario extends Creature {
 
     @Override
     public void moveX() {
+        synchronized (this) {
 
-        if ((dir && x < width / 2) || (!dir && x > 0)) {
-            super.moveX();
+            if ((dir && (x < width / 2 || (panel.getLevelX() < -2470 && x < 640))) || (!dir && x > 0)) {
+                super.moveX();
+            }
+            rect = new Rectangle(x, y, width, height);
+            animate(0, 1);
         }
-        rect = new Rectangle(x, y, width, height);
-        animate(0, 1);
     }
 
     @Override
@@ -160,13 +162,15 @@ public class Mario extends Creature {
 
     public void checkJumpStatus() {
         if (!jumping && !standing) {
-            y += 10;
+            synchronized (this) {
+                y += 10;
+            }
             jumpcount = 0;
         }
         if (standing) {
             setCanJump(true);
         }
-        if (jumping && jumpcount < 10) {
+        if (jumping && jumpcount < 20) {
             moveY();
             jumpcount++;
         }
@@ -174,9 +178,7 @@ public class Mario extends Creature {
             jumpcount = 0;
             jumping = false;
         }
-        if (y == 495) {
-            canJump = true;
-        }
+
 
     }
 

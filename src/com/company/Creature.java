@@ -148,8 +148,9 @@ public abstract class Creature extends Thread {
     }
 
     public void moveY() {
+        synchronized (this){
         y += dy;
-        rect = new Rectangle(x, y, width, height);
+        rect = new Rectangle(x, y, width, height);}
     }
 
     public void setDir(boolean dir) {

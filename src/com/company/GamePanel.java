@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     private ArrayList<Platform> platforms;
     private ArrayList<Mario> players;
     private ArrayList<Creature> monsters;
-    private static final int floorY = 425, floorH = 100;
+
     private Byte playerIndex;
     private boolean pause;
     ClientEnd client;
@@ -40,7 +40,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         this.width = width;
         this.client = client;
         pause = false;
-        System.out.println("eggies");
         this.playerIndex = playerIndex;
         // mario = new Mario(this);
         players = new ArrayList<>();
@@ -59,7 +58,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         requestFocusInWindow();
-        background = new ImageIcon("level1.png").getImage();
+        background = new ImageIcon("marioLevel.png").getImage();
         setPlatforms();
         setMonsters();
         players.get(playerIndex).start();
@@ -117,22 +116,23 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
             if (canMove(1)) {
                 players.get(playerIndex).moveX();
-                if (players.get(playerIndex).getX() < 300) {
+                if (players.get(playerIndex).getX() < 300 || levelX < -2470) {
                     players.get(playerIndex).updateRect();
-                } else if (levelX > -1800) {
+                } else {
                     //   System.out.println("X: " + levelX);
                     levelX -= players.get(playerIndex).dx;
                     //  players.get(playerIndex).updateRect();
 
                     for (Platform p : platforms) {
-                        synchronized (p){
-                        p.moveX();
-                        p.updateRect();}
+                        synchronized (p) {
+                            p.moveX();
+                            p.updateRect();
+                        }
                     }
                     for (Creature c : monsters) {
-                        synchronized (c){
-                        c.moveX();
-                        c.updateRect();
+                        synchronized (c) {
+                            c.moveX();
+                            c.updateRect();
                         }
 
                     }
@@ -152,7 +152,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 players.get(playerIndex).setJumping(true);
                 players.get(playerIndex).moveY();
                 players.get(playerIndex).setCanJump(false);
-            }
+             }
         } else if (code == KeyEvent.VK_DOWN && !pause) {
             players.get(playerIndex).moveControl(-1);
         } else if (code == KeyEvent.VK_P) {
@@ -160,9 +160,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             client.setReqPause(pause);
             if (!pause)
                 resumeGame();
-
-
+        } else if (code == KeyEvent.VK_C) {
+            System.out.println("mario x: " + players.get(playerIndex).x + " mario y: " + players.get(playerIndex).y);
+            System.out.println("level x: " + levelX);
         }
+
         repaint();
     }
 
@@ -186,9 +188,53 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     public void setPlatforms() {
         platforms = new ArrayList<>();
-        platforms.add(new Platform(-10, floorY, 1000, floorH, this, players.get(playerIndex)));
-        platforms.add(new Platform(300 + 140, 365, 30, 525 - 440, this, players.get(playerIndex)));
-       platforms.add(new Platform(150+20,300,30,30,this,players.get(playerIndex)));
+        platforms.add(new Platform(-10, Constants.floorY, 1100 - 20, Constants.floorH, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 140, 365, Constants.pipeWidth, 525 - 440, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 15, 300, 80, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 295, 335, Constants.pipeWidth, Constants.floorY + 20 - 335, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 420, 300, Constants.pipeWidth, Constants.floorY + 20 - 300, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 595, 300, Constants.pipeWidth, Constants.floorY + 20 - 300, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 810, Constants.floorY, 1050 - 810, Constants.floorH, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1095, Constants.floorY, 2100 - 1095 + 5, Constants.floorH, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2130, Constants.floorY, 1000, Constants.floorH, this, players.get(playerIndex)));
+
+        platforms.add(new Platform(Constants.MarioHalfWay + 905, 300, 55, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 950, 165, 130, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1130, 165, 45, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1173, 300, 20, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1270, 300, 30, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1554, 300, 20, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1600, 165, 45, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1710, 165, 62, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1725, 300, 29, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2260, 365, Constants.pipeWidth, Constants.floorY + 20 - 365, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2335, 300, 63, Constants.blockHeight, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2480 + 30, 365, Constants.pipeWidth, Constants.floorY + 20 - 365, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1801, 405, Constants.columnWidth, Constants.floorY - 405 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1801 + 3 + Constants.columnWidth, 365, Constants.columnWidth, Constants.floorY - 365 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1801 + 4 + 2 * Constants.columnWidth, 335, Constants.columnWidth, Constants.floorY - 335 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1801 + 5 + 3 * Constants.columnWidth, 300, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1895, 300, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1895 + 3 + Constants.columnWidth, 335, Constants.columnWidth, Constants.floorY - 335 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1895 + 4 + 2 * Constants.columnWidth, 365, Constants.columnWidth, Constants.floorY - 365 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 1895 + 5 + 3 * Constants.columnWidth, 405, Constants.columnWidth, Constants.floorY - 405 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2020, 405, Constants.columnWidth, Constants.floorY - 405 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2020 + 3 + Constants.columnWidth, 365, Constants.columnWidth, Constants.floorY - 365 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2020 + 4 + 2 * Constants.columnWidth, 335, Constants.columnWidth, Constants.floorY - 335 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2020 + 5 + 3 * Constants.columnWidth, 300, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2020 + 5 + 4 * Constants.columnWidth, 300, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2130, 300, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2130 + 3 + Constants.columnWidth, 335, Constants.columnWidth, Constants.floorY - 335 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2130 + 4 + 2 * Constants.columnWidth, 365, Constants.columnWidth, Constants.floorY - 365 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(Constants.MarioHalfWay + 2130 + 5 + 3 * Constants.columnWidth, 405, Constants.columnWidth, Constants.floorY - 405 + 10, this, players.get(playerIndex)));
+        int sp = 2480 + 360;
+        platforms.add(new Platform(sp + 3 + Constants.columnWidth, 365, Constants.columnWidth, Constants.floorY - 365 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(sp + 4 + 2 * Constants.columnWidth, 335, Constants.columnWidth, Constants.floorY - 335 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(sp + 5 + 3 * Constants.columnWidth, 300, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(sp + 5 + 4 * Constants.columnWidth, 265, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(sp + 5 + 5 * Constants.columnWidth, 230, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(sp + 6 * Constants.columnWidth, 200, Constants.columnWidth, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
+        platforms.add(new Platform(sp + 7 * Constants.columnWidth, 165, 32, Constants.floorY - 300 + 10, this, players.get(playerIndex)));
 
 
         for (Platform platform : platforms) {
