@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public abstract class Creature extends Thread {
     protected int x, y, dx, dy, size, index, width, height;
-    protected boolean alive,newDeath;
+    protected boolean alive, newDeath;
     Byte hp;
     protected final double gravity = 0.6;
     protected boolean standing;
@@ -140,17 +140,20 @@ public abstract class Creature extends Thread {
     }
 
     public void moveX() {
-        int mod = 1;
-        if (!dir)
-            mod = -1;
+        synchronized (this) {
+            int mod = 1;
+            if (!dir)
+                mod = -1;
 
-        x += (dx * mod);
+            x += (dx * mod);
+        }
     }
 
     public void moveY() {
-        synchronized (this){
-        y += dy;
-        rect = new Rectangle(x, y, width, height);}
+        synchronized (this) {
+            y += dy;
+            rect = new Rectangle(x, y, width, height);
+        }
     }
 
     public void setDir(boolean dir) {
@@ -158,18 +161,21 @@ public abstract class Creature extends Thread {
     }
 
     public void updateRect() {
-        if (rect != null) {
-            if (dir)
-                rect.setBounds(x, y, size, size);
-            else
-                rect.setBounds(x - size / 2, y, size, size);
-        } else createRect();
+        synchronized (this) {
+            if (rect != null) {
+                if (dir)
+                    rect.setBounds(x, y, size, size);
+                else
+                    rect.setBounds(x - size / 2, y, size, size);
+            } else createRect();
+        }
     }
 
     public void createRect() {
+        synchronized (this){
         if (dir)
             rect = new Rectangle(x, y, size, size);
-        else rect = new Rectangle(x - size / 2, y, size, size);
+        else rect = new Rectangle(x - size / 2, y, size, size);}
     }
 
     @Override

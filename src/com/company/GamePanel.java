@@ -15,12 +15,12 @@ import java.util.ArrayList;
 public class GamePanel extends JPanel implements KeyListener, ActionListener, Runnable {
     private Mario mario;
     private Image background;
-    private JLabel hpLabel;
+    private JLabel hpLabel, scoreLabel;
     private int height, width, levelX;
     private ArrayList<Platform> platforms;
     private ArrayList<Mario> players;
     private ArrayList<Creature> monsters;
-
+    private int score;
     private Byte playerIndex;
     private boolean pause;
     ClientEnd client;
@@ -36,6 +36,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     //   Graphics g;
     public GamePanel(int height, int width, Byte playerIndex, ClientEnd client) throws IOException {
         levelX = 0;
+        score = 0;
         this.height = height;
         this.width = width;
         this.client = client;
@@ -65,6 +66,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
         hpLabel = new JLabel("HP: 3");
         hpLabel.setBounds(10, 10, 100, 20);
+        scoreLabel = new JLabel("Score: " + score);
+        scoreLabel.setBounds(130, 10, 100, 20);
+        add(scoreLabel);
         add(hpLabel);
     }
 
@@ -75,6 +79,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public void setMonsters() {
         monsters = new ArrayList<>();
         monsters.add(new Goomba(this, getPlayers().get(playerIndex), 200, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 340, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 460, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 560, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1030, 135));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1340, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1440, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1540, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 2420, 180));
+        monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 2460, 180));
         for (Creature c : monsters) {
             c.start();
 
@@ -85,6 +98,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(background, levelX, 0, width * 4, height * 2, null);
+        String s = "hp: " + players.get(playerIndex).getHp();
+        hpLabel.setText(s);
         for (Platform p : platforms) {
             p.drawp(g);
         }
@@ -109,8 +124,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        String s = "hp: " + players.get(playerIndex).getHp();
-        hpLabel.setText(s);
+
         if (code == KeyEvent.VK_RIGHT && !pause) {
             players.get(playerIndex).setDir(true);
 
@@ -130,10 +144,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                         }
                     }
                     for (Creature c : monsters) {
-                        synchronized (c) {
-                            c.moveX();
-                            c.updateRect();
-                        }
+                        c.moveX();
+                        c.updateRect();
+
 
                     }
                     for (Mario m : players) {
@@ -152,7 +165,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 players.get(playerIndex).setJumping(true);
                 players.get(playerIndex).moveY();
                 players.get(playerIndex).setCanJump(false);
-             }
+            }
+         //   players.get(playerIndex).moveControl(1);
         } else if (code == KeyEvent.VK_DOWN && !pause) {
             players.get(playerIndex).moveControl(-1);
         } else if (code == KeyEvent.VK_P) {
@@ -244,8 +258,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     boolean canMove(int dir) {//right:: dir =1, left: dir = -1
         for (Platform p : platforms) {
-            //   System.out.println("platfrom:: " + p.getRect().getMinX());
-            //    System.out.println("mario:: " + mario.getRect().getMaxX());
             if (p.runsTo(dir))
                 return false;
         }
@@ -255,7 +267,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     @Override
     public void run() {
-        ///   System.out.println("gegg");
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e1) {
@@ -268,11 +279,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public Mario getMario() {
         return players.get(playerIndex);
     }
-
-//    //public void setMario(Mario mario) {
-//        this.mario = mario;
-//    }
-
 
     public void setBackground(Image background) {
         this.background = background;
@@ -300,9 +306,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         return platforms;
     }
 
-    public void setPlatforms(ArrayList<Platform> platforms) {
-        this.platforms = platforms;
-    }
 
     public Socket getSocket() {
         return socket;
@@ -345,17 +348,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     private void initPlayers(int playerCount) {
-        // Start players array at 1 instead of 0
+
         if (players.size() == 0) {
             players.add(0, null);
         }
-        // Adding amount of players connected (Recieved from server)
         for (int i = 1; i <= playerCount; i++) {
             players.add(new Mario(this));
 
         }
-        //Set the player which belongs to this client as being controlled by the keyboard
-        //	(and not by data from the server)
+        //set the player be controlled locally
         players.get(playerIndex).setControlled(true);
         System.out.println(players);
     }
@@ -414,6 +415,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 p.notify();
             }
         }
+    }
+
+
+    public int getScore() {
+        return score;
+    }
+
+    public void addScore(int score) {
+        this.score += score;
     }
 
 }

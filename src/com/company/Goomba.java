@@ -84,19 +84,24 @@ public class Goomba extends Creature {
             killGoomba();
         else if (collidesWithTop) {
             System.out.println("mario dead");
+            System.out.println("X: " + x + " Y: " + y);
+            System.out.println("mario at: " + mario.getX() + " " + mario.getY() + " Level X: " + panel.getLevelX());
             //   mario.marioDie();
         }
     }
 
 
     public void killGoomba() {
+        panel.addScore(100);
         if (!alive)
             return;
         synchronized (this) {
             alive = false;
             newDeath = true;
             System.out.println("goomba dead");
+
         }
+
     }
 
     @Override

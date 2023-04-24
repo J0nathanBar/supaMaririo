@@ -163,6 +163,7 @@ public class Mario extends Creature {
     public void checkJumpStatus() {
         if (!jumping && !standing) {
             synchronized (this) {
+
                 y += 10;
             }
             jumpcount = 0;

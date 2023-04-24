@@ -42,8 +42,10 @@ public class Platform extends Thread {
     }
 
     public void moveX() {
-        x += dx;
-        updateRect();
+        synchronized (this) {
+            x += dx;
+            updateRect();
+        }
     }
 
     public void updateRect() {
@@ -117,10 +119,6 @@ public class Platform extends Thread {
     }
 
     public void monsterStands(Creature creature) {
-//        Rectangle creatureFeet = new Rectangle(creature.getRect().x, creature.getRect().y + creature.getRect().height, creature.getRect().width, 1);
-//
-//        // Check if the creature's feet intersect with the platform
-//       creature.setStanding( creatureFeet.intersects(this.rect));
         if (creature.standing)
             return;
         creature.setStanding(rect.intersects(creature.getRect()));
@@ -164,18 +162,14 @@ public class Platform extends Thread {
             standsOn();
             if (panel.getMonsters() != null) {
                 for (Creature c : panel.getMonsters()) {
-                    monsterStands(c);
-
+                    if (c != null) {
+                        monsterStands(c);
+                    }
                 }
             }
             if (bumpsIntoPlatform()) {
                 mario.setJumping(false);
-//                System.out.println("bumps");
-//                System.out.println("at " + x + " " + y);
-//                System.out.println("while mario at " + mario.getX() + " " + mario.getY());
             }
-
-
             panel.repaint();
         }
     }
@@ -200,7 +194,7 @@ public class Platform extends Thread {
         int overlapX = Math.min(rect.x + rect.width, mario.getRect().x + mario.getRect().width) - Math.max(rect.x, mario.getRect().x);
         boolean isOnSameColumn = overlapX >= 0 && overlapX < rect.width;
         if (!isOnSameColumn) {
-            return false; // rect is not on the same column as mario
+            return false; //checking the x values
         }
         boolean intersects = rect.intersects(mario.getRect());
         boolean isVeryClose = Math.abs(rectBottom - marioTop) < 5; // adjust the threshold as needed
