@@ -164,7 +164,7 @@ public class Mario extends Creature {
         if (!jumping && !standing) {
             synchronized (this) {
 
-                y += 10;
+                //y += 10;
             }
             jumpcount = 0;
         }
