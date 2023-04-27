@@ -83,7 +83,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             ) {
                 c.interrupt();
 
-            }
+            }}
         monsters = new ArrayList<>();
         if (level == 1) {
             monsters.add(new Goomba(this, getPlayers().get(playerIndex), 200, 180));
