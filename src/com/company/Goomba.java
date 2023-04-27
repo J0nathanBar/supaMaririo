@@ -78,8 +78,8 @@ public class Goomba extends Creature {
         } else x -= dx / 2;
     }
 
-    public synchronized void checkCollision() {
-       // updateRect();
+    public void checkCollision() {
+        // updateRect();
         Rectangle topOfGoomba = new Rectangle(rect.x, rect.y, rect.width, rect.height / 2);
         boolean collidesWithTop = topOfGoomba.intersects(mario.getRect());
 
@@ -103,9 +103,9 @@ public class Goomba extends Creature {
         if (!alive)
             return;
 
-            alive = false;
-            newDeath = true;
-            System.out.println("goomba dead");
+        alive = false;
+        newDeath = true;
+        System.out.println("goomba dead");
 
 
     }
@@ -119,14 +119,14 @@ public class Goomba extends Creature {
             fall();
             if (alive) {
                 animate(0, 1);
-               // checkCollision();
                 if (panel.getLevel() == 2) {
                     Mario m = locateMario();
-                    if (m != null){
+                    if (m != null) {
                         chase(m);
-                        checkCollision();
                     }
                 }
+                checkCollision();
+
             } else animate(2, 2);
             //   walk(ogX - 40, ogX + 40);
 

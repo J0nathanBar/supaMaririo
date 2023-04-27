@@ -166,17 +166,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                     //  players.get(playerIndex).updateRect();
 
                     for (Platform p : platforms) {
-                        synchronized (p) {
-                            p.moveX();
-                            p.updateRect();
-                        }
+
+                        p.moveX();
+                        p.updateRect();
+
                     }
                     for (Creature c : monsters) {
                         c.moveX();
-                        if (c instanceof Goomba)
-                            ((Goomba) c).checkCollision();
-
-
                     }
                     for (Mario m : players) {
                         if (m != null && m != players.get(playerIndex))
@@ -195,9 +191,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 players.get(playerIndex).moveY();
                 players.get(playerIndex).setCanJump(false);
             }
-        //    players.get(playerIndex).moveControl(1);
+            //    players.get(playerIndex).moveControl(1);
         } else if (code == KeyEvent.VK_DOWN && !pause) {
-       //     players.get(playerIndex).moveControl(-1);
+            //     players.get(playerIndex).moveControl(-1);
         } else if (code == KeyEvent.VK_P) {
             pause = !pause;
             client.setReqPause(pause);

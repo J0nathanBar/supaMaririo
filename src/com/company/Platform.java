@@ -119,7 +119,6 @@ public class Platform extends Thread {
     }
 
 
-
     public boolean runsTo(int d) {//right: d =1, left: d=-1
         if (standingThis)
             return false;
@@ -143,17 +142,18 @@ public class Platform extends Thread {
 
     @Override
     public void run() {
-        synchronized (this) {
-            if (panel.isPause()) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                }
-            }
-        }
+
         super.run();
 
         while (true) {
+            synchronized (this) {
+                if (panel.isPause()) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
             updateRect();
             standsOn();
 
