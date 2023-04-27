@@ -78,6 +78,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public void setMonsters() {
+        if (monsters!= null){
+            for (Creature c :monsters
+            ) {
+                c.interrupt();
+
+            }
         monsters = new ArrayList<>();
         if (level == 1) {
             monsters.add(new Goomba(this, getPlayers().get(playerIndex), 200, 180));
@@ -225,6 +231,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public void setPlatforms() {
+        if (platforms != null){
+            for (Platform p :platforms
+                 ) {
+                p.interrupt();
+
+            }
+        }
         platforms = new ArrayList<>();
         if (level == 1) {
             platforms.add(new Platform(-10, Constants.floorY, 1100 - 20, Constants.floorH, this, players.get(playerIndex)));
