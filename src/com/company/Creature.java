@@ -5,9 +5,12 @@ import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public abstract class Creature extends Thread {
-    protected int x, y, dx, dy, size, index, width, height;
+    protected int x, y,
+            dx, dy, size, index, width, height;
     protected boolean alive, newDeath;
     Byte hp;
     protected final double gravity = 0.6;
@@ -144,14 +147,16 @@ public abstract class Creature extends Thread {
             int mod = 1;
             if (!dir)
                 mod = -1;
-
             x += (dx * mod);
+            createRect();
         }
+
     }
 
     public void moveY() {
+
+        y += dy;
         synchronized (this) {
-            y += dy;
             rect = new Rectangle(x, y, width, height);
         }
     }
@@ -161,21 +166,26 @@ public abstract class Creature extends Thread {
     }
 
     public void updateRect() {
-        synchronized (this) {
-            if (rect != null) {
-                if (dir)
-                    rect.setBounds(x, y, size, size);
-                else
-                    rect.setBounds(x - size / 2, y, size, size);
-            } else createRect();
-        }
+
+        if (rect != null) {
+            if (dir)
+
+                rect.setBounds(x, y, size, size);
+
+            else
+
+                rect.setBounds(x - size / 2, y, size, size);
+
+        } else createRect();
     }
 
+
     public void createRect() {
-        synchronized (this){
-        if (dir)
-            rect = new Rectangle(x, y, size, size);
-        else rect = new Rectangle(x - size / 2, y, size, size);}
+        synchronized (this) {
+            if (dir)
+                rect = new Rectangle(x, y, size, size);
+            else rect = new Rectangle(x - size / 2, y, size, size);
+        }
     }
 
     @Override

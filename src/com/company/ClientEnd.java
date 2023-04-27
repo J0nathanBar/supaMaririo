@@ -26,6 +26,7 @@ public class ClientEnd extends JPanel implements Runnable {
     GamePanel panel;
     Thread t;
     byte playerIndex;
+    boolean connected;
 
     public static boolean isReqPause() {
         return reqPause;
@@ -40,34 +41,44 @@ public class ClientEnd extends JPanel implements Runnable {
     public ClientEnd() throws IOException {
         t = new Thread(this);
         int port = 8083;
-        connectToServer(port);
+        connected = connectToServer(port);
     }
 
-    public void connectToServer(int port) throws IOException {
-        socket = new Socket("localhost", port);
+    public boolean isConnected() {
+        return connected;
+    }
 
-        inputStream = socket.getInputStream();
-        objectInputStream = new ObjectInputStream(inputStream);
-
-        outputStream = socket.getOutputStream();
-        objectOutputStream = new ObjectOutputStream(outputStream);
-
-        Data d = null;
-        // recieve player index from handler
+    public boolean connectToServer(int port) throws IOException {
         try {
-            Object o = objectInputStream.readObject();
-            if (o instanceof Data) {
-                d = (Data) o;
-                //System.out.println(d);
+            socket = new Socket("localhost", port);
+
+            inputStream = socket.getInputStream();
+            objectInputStream = new ObjectInputStream(inputStream);
+
+            outputStream = socket.getOutputStream();
+            objectOutputStream = new ObjectOutputStream(outputStream);
+
+            Data d = null;
+            // recieve player index from handler
+            try {
+                Object o = objectInputStream.readObject();
+                if (o instanceof Data) {
+                    d = (Data) o;
+                    //System.out.println(d);
+                }
+
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            this.playerIndex = d.getPlayerIndex();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("couldn't connect to the server");
+            return false;
         }
-        this.playerIndex = d.getPlayerIndex();
+        return true;
     }
 
     @Override
@@ -80,6 +91,7 @@ public class ClientEnd extends JPanel implements Runnable {
             } catch (IOException e) {
 
                 e.printStackTrace();
+                break;
             }
             Constants.sleep(1);
             Data dRecieved;
@@ -90,12 +102,11 @@ public class ClientEnd extends JPanel implements Runnable {
                 if (dRecieved.getGameStatus() == Constants.pauseGame) {
                     System.out.println("pause");
                     panel.setPause(true);
-                } else if (dRecieved.getGameStatus()==Constants.resumeGame){
+                } else if (dRecieved.getGameStatus() == Constants.resumeGame) {
                     System.out.println("resume");
                     panel.setPause(false);
                     panel.resumeGame();
-                }
-                else  {
+                } else {
                     ArrayList<Mario> arr = panel.getPlayers();
 
                     Byte index = dRecieved.getPlayerIndex();
@@ -117,11 +128,10 @@ public class ClientEnd extends JPanel implements Runnable {
                             ((Goomba) c).killGoomba();
                         }
                     }
-                    }
                 }
             }
         }
-
+    }
 
 
     private Data getData() {
@@ -187,24 +197,31 @@ public class ClientEnd extends JPanel implements Runnable {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         ClientEnd e = new ClientEnd();
-        JFrame f = new JFrame("mario");
-        Object obj;
+        if (e.isConnected()) {
+            JFrame f = new JFrame("mario");
+            Object obj;
 
-        // Reads amount of players connected from server
-        obj = e.objectInputStream.readObject();
-        if (obj instanceof Integer) {
-            int playerCount = (Integer) obj;
-            System.out.println("istg");
-            e.panel = new GamePanel(500, 828, e.playerIndex, e);
-            f.add(e.panel);
-            f.setSize(828, 500);
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            f.setResizable(false);
-            f.setVisible(true);
-            f.setFocusable(false);
-            System.out.println("got to here");
-            e.t.start();
+            // Reads amount of players connected from server
+            try {
+                obj = e.objectInputStream.readObject();
+                if (obj instanceof Integer) {
+                    int playerCount = (Integer) obj;
+                    System.out.println("istg");
+                    e.panel = new GamePanel(500, 828, e.playerIndex, e);
+                    f.add(e.panel);
+                    f.setSize(828, 500);
+                    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    f.setResizable(false);
+                    f.setVisible(true);
+                    f.setFocusable(false);
+                    System.out.println("got to here");
+                    e.t.start();
+                }
+            } catch (IOException ex) {
+                System.out.println("disconnected from the server");
+                return;
+            }
         }
-    }
 
+    }
 }

@@ -13,7 +13,6 @@ import java.sql.Time;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener, Runnable {
-    private Mario mario;
     private Image background;
     private JLabel hpLabel, scoreLabel;
     private int height, width, levelX;
@@ -40,7 +39,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         this.height = height;
         this.width = width;
         this.client = client;
-        level = 2;
+        level = 1;
         pause = false;
         this.playerIndex = playerIndex;
         // mario = new Mario(this);
@@ -61,7 +60,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         setFocusTraversalKeysEnabled(false);
         requestFocusInWindow();
         background = new ImageIcon("marioLevel.png").getImage();
-        background = new ImageIcon("level2Mario.png").getImage();
 
         setPlatforms();
         setMonsters();
@@ -82,6 +80,18 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public void setMonsters() {
         monsters = new ArrayList<>();
         if (level == 1) {
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), 200, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 340, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 460, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 560, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1030, 135));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1340, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1440, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 1540, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 2420, 180));
+            monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 2460, 180));
+
+        } else if (level == 2) {
             monsters.add(new Goomba(this, getPlayers().get(playerIndex), 200, 180));
             monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 340, 180));
             monsters.add(new Goomba(this, getPlayers().get(playerIndex), Constants.MarioHalfWay + 460, 180));
@@ -136,7 +146,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
             if (canMove(1)) {
                 players.get(playerIndex).moveX();
-                if (players.get(playerIndex).getX() < 300 || levelX < -2470) {
+                if (players.get(playerIndex).getX() - levelX >= 3120) {
+                    if (level == 1) {
+                        level2();
+
+                    } else if (level == 2) {
+
+                    }
+                } else if (players.get(playerIndex).getX() < 300 || levelX < -2470) {
                     players.get(playerIndex).updateRect();
                 } else {
                     //   System.out.println("X: " + levelX);
@@ -151,7 +168,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                     }
                     for (Creature c : monsters) {
                         c.moveX();
-                        c.updateRect();
+                        if (c instanceof Goomba)
+                            ((Goomba) c).checkCollision();
 
 
                     }
@@ -462,5 +480,22 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         this.score += score;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void level2() {
+        level = 2;
+        levelX = 0;
+        background = new ImageIcon("level2Mario.png").getImage();
+        setPlatforms();
+        setMonsters();
+        players.set(playerIndex, new Mario(this));
+        players.get(playerIndex).start();
+    }
 }
 

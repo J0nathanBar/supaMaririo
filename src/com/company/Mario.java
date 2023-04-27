@@ -70,14 +70,16 @@ public class Mario extends Creature {
 
     @Override
     public void moveX() {
-        synchronized (this) {
 
-            if ((dir && (x < width / 2 || (panel.getLevelX() < -2470 && x < 640))) || (!dir && x > 0)) {
-                super.moveX();
-            }
-            rect = new Rectangle(x, y, width, height);
-            animate(0, 1);
+
+        if ((dir && (x < width / 2 || (panel.getLevelX() < -2470 && x < 640))) || (!dir && x > 0)) {
+            super.moveX();
         }
+        synchronized (this) {
+            rect = new Rectangle(x, y, width, height);
+        }
+        animate(0, 1);
+
     }
 
     @Override

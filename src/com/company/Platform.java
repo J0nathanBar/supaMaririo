@@ -118,11 +118,7 @@ public class Platform extends Thread {
 
     }
 
-    public void monsterStands(Creature creature) {
-        if (creature.standing)
-            return;
-        creature.setStanding(rect.intersects(creature.getRect()));
-    }
+
 
     public boolean runsTo(int d) {//right: d =1, left: d=-1
         if (standingThis)
@@ -160,13 +156,7 @@ public class Platform extends Thread {
         while (true) {
             updateRect();
             standsOn();
-            if (panel.getMonsters() != null) {
-                for (Creature c : panel.getMonsters()) {
-                    if (c != null) {
-                        monsterStands(c);
-                    }
-                }
-            }
+
             if (bumpsIntoPlatform()) {
                 mario.setJumping(false);
             }
