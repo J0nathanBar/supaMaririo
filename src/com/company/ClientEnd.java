@@ -106,11 +106,9 @@ public class ClientEnd extends JPanel implements Runnable {
                     System.out.println("resume");
                     panel.setPause(false);
                     panel.resumeGame();
-                }
-                else if (dRecieved.getLevel() != (byte)panel.getLevel()){
+                } else if (dRecieved.getLevel() != null && dRecieved.getLevel() != (byte) panel.getLevel()) {
                     panel.level2();
-                }
-                else {
+                } else {
                     ArrayList<Mario> arr = panel.getPlayers();
 
                     Byte index = dRecieved.getPlayerIndex();
