@@ -78,12 +78,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public void setMonsters() {
-        if (monsters!= null){
-            for (Creature c :monsters
+        if (monsters != null) {
+            for (Creature c : monsters
             ) {
                 c.interrupt();
 
-            }}
+            }
+        }
         monsters = new ArrayList<>();
         if (level == 1) {
             monsters.add(new Goomba(this, getPlayers().get(playerIndex), 200, 180));
@@ -120,8 +121,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(background, levelX, 0, width * 4, height * 2, null);
-        String s = "hp: " + players.get(playerIndex).getHp();
-        hpLabel.setText(s);
         for (Platform p : platforms) {
             p.drawp(g);
         }
@@ -191,14 +190,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 players.get(playerIndex).moveX();
             }
         } else if (code == KeyEvent.VK_UP) {
-//            if (players.get(playerIndex).isCanJump()) {
-//                players.get(playerIndex).setJumping(true);
-//                players.get(playerIndex).moveY();
-//                players.get(playerIndex).setCanJump(false);
-//            }
-            players.get(playerIndex).moveControl(1);
+            if (players.get(playerIndex).isCanJump()) {
+                players.get(playerIndex).setJumping(true);
+                players.get(playerIndex).moveY();
+                players.get(playerIndex).setCanJump(false);
+            }
+        //    players.get(playerIndex).moveControl(1);
         } else if (code == KeyEvent.VK_DOWN && !pause) {
-            players.get(playerIndex).moveControl(-1);
+       //     players.get(playerIndex).moveControl(-1);
         } else if (code == KeyEvent.VK_P) {
             pause = !pause;
             client.setReqPause(pause);
@@ -231,9 +230,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public void setPlatforms() {
-        if (platforms != null){
-            for (Platform p :platforms
-                 ) {
+        if (platforms != null) {
+            for (Platform p : platforms
+            ) {
                 p.interrupt();
 
             }
@@ -340,6 +339,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
+        hpLabel.setText("Hp: " + players.get(playerIndex).getHp());
+        scoreLabel.setText("Score: " + score);
 
     }
 
