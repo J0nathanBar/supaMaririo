@@ -106,7 +106,11 @@ public class ClientEnd extends JPanel implements Runnable {
                     System.out.println("resume");
                     panel.setPause(false);
                     panel.resumeGame();
-                } else {
+                }
+                else if (dRecieved.getLevel() != (byte)panel.getLevel()){
+                    panel.level2();
+                }
+                else {
                     ArrayList<Mario> arr = panel.getPlayers();
 
                     Byte index = dRecieved.getPlayerIndex();
@@ -185,8 +189,7 @@ public class ClientEnd extends JPanel implements Runnable {
                     panel.getMonsters().get(i).setNewDeath(false);
                 }
             }
-            d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters
-            );
+            d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters, (byte) panel.getLevel());
 
             if (d != null) {
                 objectOutputStream.writeObject(d);

@@ -10,7 +10,7 @@ public class Data implements Serializable {
    private Byte hp;
     private Byte playerIndex;
 
-
+Byte level;
 
     private Byte gameStatus;
    private ArrayList<Integer> deadMonsters;
@@ -20,7 +20,7 @@ public class Data implements Serializable {
 
     }
 
-    public Data(Integer marioX, Integer marioY, Integer levelX, Byte hp, Byte playerIndex,ArrayList<Integer> deadMonsters) {
+    public Data(Integer marioX, Integer marioY, Integer levelX, Byte hp, Byte playerIndex,ArrayList<Integer> deadMonsters,Byte level) {
         this.marioX = marioX;
         this.marioY = marioY;
         this.levelX = levelX;
@@ -28,6 +28,7 @@ public class Data implements Serializable {
         this.hp = hp;
         this.playerIndex = playerIndex;
         gameStatus = Constants.noChange;
+        this.level = level;
     }
 
 
@@ -104,6 +105,14 @@ public class Data implements Serializable {
 
     public void setGameStatus(Byte gameStatus) {
         this.gameStatus = gameStatus;
+    }
+
+    public Byte getLevel() {
+        return level;
+    }
+
+    public void setLevel(Byte level) {
+        this.level = level;
     }
 }
 
