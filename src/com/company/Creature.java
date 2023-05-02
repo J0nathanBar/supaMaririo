@@ -15,7 +15,7 @@ public abstract class Creature extends Thread {
     Byte hp;
     protected final double gravity = 0.6;
     protected boolean standing;
-    protected Rectangle rect;
+    protected volatile Rectangle rect;
     protected GamePanel panel;
 
 
@@ -143,29 +143,29 @@ public abstract class Creature extends Thread {
     }
 
     public void moveX() {
-        synchronized (this) {
-            int mod = 1;
-            if (!dir)
-                mod = -1;
-            x += (dx * mod);
-            createRect();
-        }
+
+        int mod = 1;
+        if (!dir)
+            mod = -1;
+        x += (dx * mod);
+        updateRect();
+
 
     }
 
     public void moveY() {
 
         y += dy;
-        synchronized (this) {
-            rect = new Rectangle(x, y, width, height);
-        }
+      //  rect = new Rectangle(x, y, width, height);
+        updateRect();
+
     }
 
     public void setDir(boolean dir) {
         this.dir = dir;
     }
 
-    public void updateRect() {
+    public synchronized void updateRect() {
 
         if (rect != null) {
             if (dir)
@@ -180,12 +180,12 @@ public abstract class Creature extends Thread {
     }
 
 
-    public void createRect() {
-        synchronized (this) {
-            if (dir)
-                rect = new Rectangle(x, y, size, size);
-            else rect = new Rectangle(x - size / 2, y, size, size);
-        }
+    public synchronized void createRect() {
+
+        if (dir)
+            rect = new Rectangle(x, y, size, size);
+        else rect = new Rectangle(x - size / 2, y, size, size);
+
     }
 
     @Override
@@ -206,7 +206,7 @@ public abstract class Creature extends Thread {
     }
 
     public void drawCreature(Graphics g) {
-       // g.drawRect((int) rect.getX(), (int) rect.getY(), size, size);
+        g.drawRect((int) rect.getX(), (int) rect.getY(), size, size);
         Image img = images.get(index);
         if (dir)
             g.drawImage(img, x, y, size, size, null);

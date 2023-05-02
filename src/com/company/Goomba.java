@@ -79,7 +79,7 @@ public class Goomba extends Creature {
     }
 
     public void checkCollision() {
-        // updateRect();
+        //updateRect();
         Rectangle topOfGoomba = new Rectangle(rect.x, rect.y, rect.width, rect.height / 2);
         boolean collidesWithTop = topOfGoomba.intersects(mario.getRect());
 
@@ -141,6 +141,7 @@ public class Goomba extends Creature {
     public void fall() {
         if (!standing) {
             y += 10;
+            updateRect();
         }
         if (y > Constants.floorY + 20)
             killGoomba();

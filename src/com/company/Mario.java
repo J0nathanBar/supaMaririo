@@ -75,9 +75,8 @@ public class Mario extends Creature {
         if ((dir && (x < width / 2 || (panel.getLevelX() < -2470 && x < 640))) || (!dir && x > 0)) {
             super.moveX();
         }
-        synchronized (this) {
-            rect = new Rectangle(x, y, width, height);
-        }
+
+
         animate(0, 1);
 
     }
@@ -95,6 +94,7 @@ public class Mario extends Creature {
     @Override
     public void run() {
         while (true) {
+
             synchronized (this) {
                 if (panel.isPause()) {
                     try {
@@ -104,6 +104,7 @@ public class Mario extends Creature {
                 }
             }
             super.run();
+            updateRect();
             setStanding();
             checkJumpStatus();
             try {

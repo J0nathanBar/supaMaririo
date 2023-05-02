@@ -173,6 +173,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                     }
                     for (Creature c : monsters) {
                         c.moveX();
+
                     }
                     for (Mario m : players) {
                         if (m != null && m != players.get(playerIndex))
