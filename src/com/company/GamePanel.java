@@ -578,7 +578,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         if (victory)
             return;
         System.out.println("Victory");
-        victoryScreen.setText("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
+        score += players.get(playerIndex).getHp() * 500;
+        victoryScreen.setText("YOU WON! SCORE: " +score );
 
         victory = true;
         gameRunning = false;
