@@ -35,10 +35,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     //   Graphics g;
     public GamePanel(int height, int width, Byte playerIndex, ClientEnd client) throws IOException {
-        gameRunning = true;
+        gameRunning = false;//CHANGE!!!
         levelX = 0;
         score = 0;
-        victory = false;
+        victory = true;//CHANGE !!!
         this.height = height;
         this.width = width;
         this.client = client;
@@ -126,7 +126,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         if (gameRunning) {
             super.paintComponent(g);
             boolean atLeastOneAlive = false;
-            System.out.println("Hp: " + players.get(playerIndex).getHp());
             hpLabel.setText("Hp: " + players.get(playerIndex).getHp());
             scoreLabel.setText("Score: " + score);
             g.drawImage(background, levelX, 0, width * 4, height * 2, null);
@@ -149,17 +148,22 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 gameRunning = false;
             }
         } else {
+            this.setBackground(Color.WHITE);
+
             if (!victory) {
                 scoreLabel.setVisible(false);
                 hpLabel.setVisible(false);
                 loseLabel.setFont(new Font("Arial", Font.PLAIN, 32));
                 loseLabel.setHorizontalAlignment(JLabel.CENTER);
+                loseLabel.setVerticalAlignment(JLabel.CENTER);
                 loseLabel.setVisible(true);
             } else {
+
                 victoryScreen = new JLabel("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
                 victoryScreen.setFont(new Font("Arial", Font.PLAIN, 32));
                 victoryScreen.setHorizontalAlignment(JLabel.CENTER);
                 victoryScreen.setVisible(true);
+                this.add(victoryScreen);
             }
         }
     }
@@ -176,64 +180,62 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         if (players.get(playerIndex).getHp() > 0) {
-
             if (code == KeyEvent.VK_RIGHT && !pause) {
                 players.get(playerIndex).setDir(true);
-
                 if (canMove(1)) {
+
                     players.get(playerIndex).moveX();
                     if (players.get(playerIndex).getX() - levelX >= 3120) {
                         if (level == 1) {
                             level2();
-
                         } else if (level == 2) {
                             setVictory();
                         }
-                    }
-                } else if (players.get(playerIndex).getX() < 300 || levelX < -2470) {
-                    players.get(playerIndex).updateRect();
-                } else {
-                    levelX -= players.get(playerIndex).dx;
-                    for (Platform p : platforms) {
+                    } else if (players.get(playerIndex).getX() < 300 || levelX < -2470) {
+                        players.get(playerIndex).updateRect();
+                    } else {
+                        levelX -= players.get(playerIndex).dx;
+                        for (Platform p : platforms) {
 
-                        p.moveX();
-                        p.updateRect();
+                            p.moveX();
+                            p.updateRect();
 
-                    }
-                    for (Creature c : monsters) {
-                        c.moveX();
+                        }
+                        for (Creature c : monsters) {
+                            c.moveX();
 
-                    }
-                    for (Mario m : players) {
-                        if (m != null && m != players.get(playerIndex))
-                            m.setX(m.getX() - m.dx);
+                        }
+                        for (Mario m : players) {
+                            if (m != null && m != players.get(playerIndex))
+                                m.setX(m.getX() - m.dx);
+                        }
                     }
                 }
+            } else if (code == KeyEvent.VK_LEFT && !pause) {
+                if (canMove(-1)) {
+                    players.get(playerIndex).setDir(false);
+                    players.get(playerIndex).moveX();
+                }
+            } else if (code == KeyEvent.VK_UP && !pause) {
+                if (players.get(playerIndex).isCanJump()) {
+                    players.get(playerIndex).setJumping(true);
+                    players.get(playerIndex).moveY();
+                    players.get(playerIndex).setCanJump(false);
+                }
+                //    players.get(playerIndex).moveControl(1);
+            } else if (code == KeyEvent.VK_DOWN && !pause) {
+                //     players.get(playerIndex).moveControl(-1);
+            } else if (code == KeyEvent.VK_P) {
+                pause = !pause;
+                client.setReqPause(pause);
+                if (!pause)
+                    resumeGame();
+            } else if (code == KeyEvent.VK_C) {
+                System.out.println("mario x: " + players.get(playerIndex).x + " mario y: " + players.get(playerIndex).y);
+                System.out.println("level x: " + levelX);
             }
-        } else if (code == KeyEvent.VK_LEFT && !pause) {
-            if (canMove(-1)) {
-                players.get(playerIndex).setDir(false);
-                players.get(playerIndex).moveX();
-            }
-        } else if (code == KeyEvent.VK_UP) {
-            if (players.get(playerIndex).isCanJump()) {
-                players.get(playerIndex).setJumping(true);
-                players.get(playerIndex).moveY();
-                players.get(playerIndex).setCanJump(false);
-            }
-            //    players.get(playerIndex).moveControl(1);
-        } else if (code == KeyEvent.VK_DOWN && !pause) {
-            //     players.get(playerIndex).moveControl(-1);
-        } else if (code == KeyEvent.VK_P) {
-            pause = !pause;
-            client.setReqPause(pause);
-            if (!pause)
-                resumeGame();
-        } else if (code == KeyEvent.VK_C) {
-            System.out.println("mario x: " + players.get(playerIndex).x + " mario y: " + players.get(playerIndex).y);
-            System.out.println("level x: " + levelX);
+            repaint();
         }
-        repaint();
     }
 
     @Override
@@ -521,7 +523,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public void level2() {
-
+        if (level == 2)
+            return;
         level = 2;
         levelX = 0;
         background = new ImageIcon("level2Mario.png").getImage();
@@ -571,7 +574,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public void setVictory() {
-
+        if (victory)
+            return;
         victory = true;
         gameRunning = false;
         stopGame();

@@ -92,9 +92,10 @@ public class Goomba extends Creature {
 
 
     public synchronized void killGoomba() {
-        panel.addScore(100);
         if (!alive)
             return;
+        panel.addScore(100);
+
         alive = false;
         newDeath = true;
 
