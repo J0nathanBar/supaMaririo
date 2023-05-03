@@ -206,7 +206,7 @@ public abstract class Creature extends Thread {
     }
 
     public void drawCreature(Graphics g) {
-        g.drawRect((int) rect.getX(), (int) rect.getY(), size, size);
+       // g.drawRect((int) rect.getX(), (int) rect.getY(), size, size);
         Image img = images.get(index);
         if (dir)
             g.drawImage(img, x, y, size, size, null);

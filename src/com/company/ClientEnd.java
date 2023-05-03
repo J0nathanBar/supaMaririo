@@ -98,16 +98,20 @@ public class ClientEnd extends JPanel implements Runnable {
             dRecieved = getData(); // Reliading data from input stream
             if (dRecieved != null) {
 
+                if (dRecieved.getVictory() != null && dRecieved.getVictory() && !panel.isVictory()) {
+                    panel.setVictory();
+                    if (dRecieved.getGameStatus() == Constants.pauseGame) {
+                        System.out.println("pause");
+                        panel.setPause(true);
+                    } else if (dRecieved.getGameStatus() == Constants.resumeGame) {
+                        System.out.println("resume");
+                        panel.setPause(false);
+                        panel.resumeGame();
+                    } else if (dRecieved.getLevel() != null && dRecieved.getLevel() != (byte) panel.getLevel()) {
+                        panel.level2();
 
-                if (dRecieved.getGameStatus() == Constants.pauseGame) {
-                    System.out.println("pause");
-                    panel.setPause(true);
-                } else if (dRecieved.getGameStatus() == Constants.resumeGame) {
-                    System.out.println("resume");
-                    panel.setPause(false);
-                    panel.resumeGame();
-                } else if (dRecieved.getLevel() != null && dRecieved.getLevel() != (byte) panel.getLevel()) {
-                    panel.level2();
+                    }
+
                 } else {
                     ArrayList<Mario> arr = panel.getPlayers();
 
@@ -117,11 +121,7 @@ public class ClientEnd extends JPanel implements Runnable {
                     Byte hp = dRecieved.getHp();
                     if (arr.get(index) == null) {
                         arr.set(index, new Mario(x, y, hp, panel));
-                    }
-                    if (dRecieved.getVictory()!=null && dRecieved.getVictory()){
-                        panel.setVictory();
-                    }
-                    else {
+                    } else {
                         Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
                         m.setX(x + panel.getLevelX());
                         m.setY(y);
@@ -191,7 +191,7 @@ public class ClientEnd extends JPanel implements Runnable {
                     panel.getMonsters().get(i).setNewDeath(false);
                 }
             }
-            d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters, (byte) panel.getLevel(),panel.isVictory());
+            d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters, (byte) panel.getLevel(), panel.isVictory());
 
             if (d != null) {
                 objectOutputStream.writeObject(d);
