@@ -163,6 +163,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
                 victoryScreen.setFont(new Font("Arial", Font.PLAIN, 32));
                 victoryScreen.setHorizontalAlignment(JLabel.CENTER);
+                victoryScreen.setVerticalAlignment(JLabel.CENTER);
                 victoryScreen.setVisible(true);
             }
         }
