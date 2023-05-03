@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener, Runnable {
     private Image background;
-    private JLabel hpLabel, scoreLabel;
+    private JLabel hpLabel, scoreLabel, victoryScreen, loseLabel;
     private int height, width, levelX;
     private ArrayList<Platform> platforms;
     private ArrayList<Mario> players;
@@ -30,12 +30,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     OutputStream outputStream;
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
+    boolean gameRunning, victory;
 
 
     //   Graphics g;
     public GamePanel(int height, int width, Byte playerIndex, ClientEnd client) throws IOException {
+        gameRunning = true;
         levelX = 0;
         score = 0;
+        victory = false;
         this.height = height;
         this.width = width;
         this.client = client;
@@ -69,8 +72,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         hpLabel.setBounds(10, 10, 100, 20);
         scoreLabel = new JLabel("Score: " + score);
         scoreLabel.setBounds(130, 10, 100, 20);
+        loseLabel = new JLabel("GAME OVER!");
+        loseLabel.setVisible(false);
+        add(loseLabel);
         add(scoreLabel);
         add(hpLabel);
+
+
     }
 
     public ArrayList<Creature> getMonsters() {
@@ -79,11 +87,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     public void setMonsters() {
         if (monsters != null) {
-            for (Creature c : monsters
-            ) {
-                c.interrupt();
-
-            }
+            stopMonsters();
         }
         monsters = new ArrayList<>();
         if (level == 1) {
@@ -119,18 +123,44 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(background, levelX, 0, width * 4, height * 2, null);
-        for (Platform p : platforms) {
-            p.drawp(g);
-        }
-        for (Creature c : monsters) {
-            c.drawCreature(g);
-        }
-        for (Mario mario : players
-        ) {
-            if (mario != null)
-                mario.drawCreature(g);
+        if (gameRunning) {
+            super.paintComponent(g);
+            boolean atLeastOneAlive = false;
+            System.out.println("Hp: " + players.get(playerIndex).getHp());
+            hpLabel.setText("Hp: " + players.get(playerIndex).getHp());
+            scoreLabel.setText("Score: " + score);
+            g.drawImage(background, levelX, 0, width * 4, height * 2, null);
+            for (Platform p : platforms) {
+                p.drawp(g);
+            }
+            for (Creature c : monsters) {
+                c.drawCreature(g);
+            }
+            for (Mario mario : players
+            ) {
+
+                if (mario != null && mario.getHp() > 0) {
+                    mario.drawCreature(g);
+                    atLeastOneAlive = true;
+                }
+
+            }
+            if (players.get(playerIndex) != null && !atLeastOneAlive) {
+                gameRunning = false;
+            }
+        } else {
+            if (!victory) {
+                scoreLabel.setVisible(false);
+                hpLabel.setVisible(false);
+                loseLabel.setFont(new Font("Arial", Font.PLAIN, 32));
+                loseLabel.setHorizontalAlignment(JLabel.CENTER);
+                loseLabel.setVisible(true);
+            } else {
+                victoryScreen = new JLabel("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
+                victoryScreen.setFont(new Font("Arial", Font.PLAIN, 32));
+                victoryScreen.setHorizontalAlignment(JLabel.CENTER);
+                victoryScreen.setVisible(true);
+            }
         }
     }
 
@@ -145,26 +175,25 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
+        if (players.get(playerIndex).getHp() > 0) {
 
-        if (code == KeyEvent.VK_RIGHT && !pause) {
-            players.get(playerIndex).setDir(true);
+            if (code == KeyEvent.VK_RIGHT && !pause) {
+                players.get(playerIndex).setDir(true);
 
-            if (canMove(1)) {
-                players.get(playerIndex).moveX();
-                if (players.get(playerIndex).getX() - levelX >= 3120) {
-                    if (level == 1) {
-                        level2();
+                if (canMove(1)) {
+                    players.get(playerIndex).moveX();
+                    if (players.get(playerIndex).getX() - levelX >= 3120) {
+                        if (level == 1) {
+                            level2();
 
-                    } else if (level == 2) {
-
+                        } else if (level == 2) {
+                           setVictory();
+                        }
                     }
                 } else if (players.get(playerIndex).getX() < 300 || levelX < -2470) {
                     players.get(playerIndex).updateRect();
                 } else {
-                    //   System.out.println("X: " + levelX);
                     levelX -= players.get(playerIndex).dx;
-                    //  players.get(playerIndex).updateRect();
-
                     for (Platform p : platforms) {
 
                         p.moveX();
@@ -204,7 +233,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             System.out.println("mario x: " + players.get(playerIndex).x + " mario y: " + players.get(playerIndex).y);
             System.out.println("level x: " + levelX);
         }
-
         repaint();
     }
 
@@ -228,11 +256,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     public void setPlatforms() {
         if (platforms != null) {
-            for (Platform p : platforms
-            ) {
-                p.interrupt();
-
-            }
+            stopPlatforms();
         }
         platforms = new ArrayList<>();
         if (level == 1) {
@@ -336,8 +360,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        hpLabel.setText("Hp: " + players.get(playerIndex).getHp());
-        scoreLabel.setText("Score: " + score);
+
 
     }
 
@@ -421,9 +444,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
             players.add(new Mario(this));
 
         }
-        //set the player be controlled locally
         players.get(playerIndex).setControlled(true);
-        System.out.println(players);
     }
 
     private void startPlayers() {
@@ -500,13 +521,57 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     }
 
     public void level2() {
+
         level = 2;
         levelX = 0;
         background = new ImageIcon("level2Mario.png").getImage();
+
+        synchronized (players.get(playerIndex)) {
+            players.set(playerIndex, new Mario(this));
+        }
         setPlatforms();
         setMonsters();
-        players.set(playerIndex, new Mario(this));
+
         players.get(playerIndex).start();
+    }
+
+    public void marioDead() {
+
+
+        synchronized (players.get(playerIndex)) {
+            players.get(playerIndex).interrupt();
+        }
+    }
+
+    public synchronized void stopGame() {
+        synchronized (players.get(playerIndex)) {
+            players.get(playerIndex).interrupt();
+        }
+        stopPlatforms();
+        stopMonsters();
+    }
+
+    public synchronized void stopPlatforms() {
+        for (Platform p : platforms
+        ) {
+            synchronized (p) {
+                p.interrupt();
+            }
+        }
+    }
+
+    public synchronized void stopMonsters() {
+        for (Creature c : monsters
+        ) {
+            synchronized (c) {
+                c.interrupt();
+            }
+
+        }
+    }
+    public void setVictory(){
+        victory = true;
+        stopGame();
     }
 }
 

@@ -42,13 +42,10 @@ public class Platform extends Thread {
     }
 
     public void moveX() {
-        synchronized (this) {
-            x += dx;
-            updateRect();
-        }
+        x += dx;
     }
 
-    public void updateRect() {
+    public synchronized void updateRect() {
         rect = new Rectangle(x, y, width, height);
     }
 
@@ -108,8 +105,6 @@ public class Platform extends Thread {
 
         double distance = rect.getMinY() - mario.getRect().getMaxY();
         if (rect.intersects(mario.getRect()) && distance > -11 && distance <= 0) {
-            // System.out.println(distance);
-
             standingThis = true;
 
         } else if (standingThis && !rect.intersects(mario.getRect())) {

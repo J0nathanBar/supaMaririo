@@ -94,17 +94,7 @@ public class Mario extends Creature {
     @Override
     public void run() {
         while (true) {
-
-            synchronized (this) {
-                if (panel.isPause()) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
             super.run();
-            updateRect();
             setStanding();
             checkJumpStatus();
             try {
@@ -191,11 +181,13 @@ public class Mario extends Creature {
         this.controlled = controlled;
     }
 
-    public void marioDie() {
-        hp--;
+    public synchronized void marioDie() {
         if (hp > 0) {
-            x = 0;
+            hp--;
+            x -= 50;
             y = 295;
+
         }
+        else panel.marioDead();
     }
 }

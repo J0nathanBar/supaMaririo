@@ -67,8 +67,6 @@ public class Goomba extends Creature {
             dir = !dir;
         }
         this.x += this.dx;
-        //
-        // System.out.println("goomba X: " + this.x);
     }
 
 
@@ -88,12 +86,7 @@ public class Goomba extends Creature {
         if (collidesWithTop && otherIsAbove) {
             killGoomba();
         } else if (rect.intersects(mario.getRect())) {
-
-            System.out.println("intersects: " + rect.intersects(mario.getRect()));
-            System.out.println("mario dead");
-            System.out.println(rect.toString());
-            System.out.println("mario at: " + mario.getRect().toString());
-            //   mario.marioDie();
+            mario.marioDie();
         }
     }
 
@@ -102,11 +95,8 @@ public class Goomba extends Creature {
         panel.addScore(100);
         if (!alive)
             return;
-
         alive = false;
         newDeath = true;
-        System.out.println("goomba dead");
-
 
     }
 
@@ -162,7 +152,6 @@ public class Goomba extends Creature {
             }
 
         }
-        //  System.out.println("min range: " + minRange);
         if (minRange > 300 || minRange < Math.abs(dx / 2))
             return null;
         return closest;
