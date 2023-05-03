@@ -187,7 +187,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                             level2();
 
                         } else if (level == 2) {
-                           setVictory();
+                            setVictory();
                         }
                     }
                 } else if (players.get(playerIndex).getX() < 300 || levelX < -2470) {
@@ -569,9 +569,16 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
         }
     }
-    public void setVictory(){
+
+    public void setVictory() {
+
         victory = true;
+        gameRunning = false;
         stopGame();
+    }
+
+    public boolean isVictory() {
+        return victory;
     }
 }
 

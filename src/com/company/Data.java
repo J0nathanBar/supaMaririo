@@ -6,21 +6,23 @@ import java.util.ArrayList;
 public class Data implements Serializable {
     private static final long serialVersionUID = 1L;
 
-  private Integer marioX,marioY,levelX;
-   private Byte hp;
+    private Integer marioX, marioY, levelX;
+    private Byte hp;
     private Byte playerIndex;
 
-Byte level;
+    Byte level;
 
     private Byte gameStatus;
-   private ArrayList<Integer> deadMonsters;
+    private Boolean victory;
+    private ArrayList<Integer> deadMonsters;
+
     public Data(Byte playerIndex) {
         this.playerIndex = playerIndex;
         gameStatus = Constants.noChange;
 
     }
 
-    public Data(Integer marioX, Integer marioY, Integer levelX, Byte hp, Byte playerIndex,ArrayList<Integer> deadMonsters,Byte level) {
+    public Data(Integer marioX, Integer marioY, Integer levelX, Byte hp, Byte playerIndex, ArrayList<Integer> deadMonsters, Byte level, Boolean victory) {
         this.marioX = marioX;
         this.marioY = marioY;
         this.levelX = levelX;
@@ -29,9 +31,8 @@ Byte level;
         this.playerIndex = playerIndex;
         gameStatus = Constants.noChange;
         this.level = level;
+        this.victory = victory;
     }
-
-
 
 
     public Data(Byte playerIndex, Byte gameStatus) {
@@ -113,6 +114,14 @@ Byte level;
 
     public void setLevel(Byte level) {
         this.level = level;
+    }
+
+    public Boolean getVictory() {
+        return victory;
+    }
+
+    public void setVictory(Boolean victory) {
+        this.victory = victory;
     }
 }
 

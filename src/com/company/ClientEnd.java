@@ -117,7 +117,11 @@ public class ClientEnd extends JPanel implements Runnable {
                     Byte hp = dRecieved.getHp();
                     if (arr.get(index) == null) {
                         arr.set(index, new Mario(x, y, hp, panel));
-                    } else {
+                    }
+                    if (dRecieved.getVictory()!=null && dRecieved.getVictory()){
+                        panel.setVictory();
+                    }
+                    else {
                         Mario m = panel.getPlayers().get(dRecieved.getPlayerIndex());
                         m.setX(x + panel.getLevelX());
                         m.setY(y);
@@ -187,7 +191,7 @@ public class ClientEnd extends JPanel implements Runnable {
                     panel.getMonsters().get(i).setNewDeath(false);
                 }
             }
-            d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters, (byte) panel.getLevel());
+            d = new Data(thisMario.getX(), thisMario.getY(), panel.getLevelX(), thisMario.getHp(), playerIndex, monsters, (byte) panel.getLevel(),panel.isVictory());
 
             if (d != null) {
                 objectOutputStream.writeObject(d);
