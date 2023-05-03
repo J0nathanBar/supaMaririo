@@ -161,7 +161,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 loseLabel.setVisible(true);
             } else {
 
-                victoryScreen.setText("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
                 victoryScreen.setFont(new Font("Arial", Font.PLAIN, 32));
                 victoryScreen.setHorizontalAlignment(JLabel.CENTER);
                 victoryScreen.setVisible(true);
@@ -578,6 +577,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         if (victory)
             return;
         System.out.println("Victory");
+        victoryScreen.setText("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
+
         victory = true;
         gameRunning = false;
         stopGame();
