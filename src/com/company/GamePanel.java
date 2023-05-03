@@ -35,10 +35,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
 
     //   Graphics g;
     public GamePanel(int height, int width, Byte playerIndex, ClientEnd client) throws IOException {
-        gameRunning = false;//CHANGE!!!
+        gameRunning = true;
         levelX = 0;
         score = 0;
-        victory = true;//CHANGE !!!
+        victory = false;
         this.height = height;
         this.width = width;
         this.client = client;
@@ -74,10 +74,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
         scoreLabel.setBounds(130, 10, 100, 20);
         loseLabel = new JLabel("GAME OVER!");
         loseLabel.setVisible(false);
+        victoryScreen = new JLabel("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
+        victoryScreen.setVisible(false);
+        this.add(victoryScreen);
         add(loseLabel);
         add(scoreLabel);
         add(hpLabel);
-
 
     }
 
@@ -159,11 +161,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
                 loseLabel.setVisible(true);
             } else {
 
-                victoryScreen = new JLabel("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
+                victoryScreen.setText("YOU WON! SCORE: " + score + (players.get(playerIndex).getHp() * 500));
                 victoryScreen.setFont(new Font("Arial", Font.PLAIN, 32));
                 victoryScreen.setHorizontalAlignment(JLabel.CENTER);
                 victoryScreen.setVisible(true);
-                this.add(victoryScreen);
             }
         }
     }
@@ -576,9 +577,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener, Ru
     public void setVictory() {
         if (victory)
             return;
+        System.out.println("Victory");
         victory = true;
         gameRunning = false;
         stopGame();
+        repaint();
     }
 
     public boolean isVictory() {

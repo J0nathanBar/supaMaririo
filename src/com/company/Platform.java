@@ -29,10 +29,9 @@ public class Platform extends Thread {
     }
 
     public void drawp(Graphics g) {
-        g.drawRect(x, y, width, height);
+        //g.drawRect(x, y, width, height);
         //  g.setColor(Color.red);
-        // if (height!= floorH)
-        // g.fillRect(x,y,width,height);
+
 
     }
 
