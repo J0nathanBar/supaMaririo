@@ -59,7 +59,7 @@ public class ClientEnd extends JPanel implements Runnable {
             objectOutputStream = new ObjectOutputStream(outputStream);
 
             Data d = null;
-            // recieve player index from handler
+            // receive player index from handler
             try {
                 Object o = objectInputStream.readObject();
                 if (o instanceof Data) {
@@ -83,11 +83,10 @@ public class ClientEnd extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("running");
         while (true) {
             try {
                 Constants.sleep(1);
-                sendData(); // sel1nd data to everyone else except the one who sent
+                sendData();
             } catch (IOException e) {
 
                 e.printStackTrace();
@@ -95,7 +94,7 @@ public class ClientEnd extends JPanel implements Runnable {
             }
             Constants.sleep(1);
             Data dRecieved;
-            dRecieved = getData(); // Reliading data from input stream
+            dRecieved = getData();
             if (dRecieved != null) {
 
                 if (dRecieved.getVictory() != null && dRecieved.getVictory() && !panel.isVictory()) {
@@ -144,24 +143,11 @@ public class ClientEnd extends JPanel implements Runnable {
         Data d = null;
         Object o;
         try {
-            // reads info from handlers (might be Data or String)
             o = objectInputStream.readObject();
-
-            if (o instanceof Data) {
-                d = (Data) o;
-                //   System.out.println("recieved: " + d);
-            } else {
-                if (o instanceof String) {
-                    if (o.equals("Add Player")) {
-                        //      m.players.add(new Bomberman(m));
-                    }
-                }
-            }
+            d = (Data) o;
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generatelid catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -211,7 +197,6 @@ public class ClientEnd extends JPanel implements Runnable {
                 obj = e.objectInputStream.readObject();
                 if (obj instanceof Integer) {
                     int playerCount = (Integer) obj;
-                    System.out.println("istg");
                     e.panel = new GamePanel(500, 828, e.playerIndex, e);
                     f.add(e.panel);
                     f.setSize(828, 500);
@@ -219,7 +204,6 @@ public class ClientEnd extends JPanel implements Runnable {
                     f.setResizable(false);
                     f.setVisible(true);
                     f.setFocusable(false);
-                    System.out.println("got to here");
                     e.t.start();
                 }
             } catch (IOException ex) {
