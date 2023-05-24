@@ -1,17 +1,23 @@
 package com.company;
 
 
-
 import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public abstract class Creature extends Thread  {
-  protected   int x,y,dx,dy,size,index,width,height,hp;
-  protected boolean standing;
-  protected Rectangle rect;
- protected GamePanel panel;
+public abstract class Creature extends Thread {
+    protected int x, y,
+            dx, dy, size, index, width, height;
+    protected boolean alive, newDeath;
+    Byte hp;
+    protected final double gravity = 0.6;
+    protected boolean standing;
+    protected volatile Rectangle rect;
+    protected GamePanel panel;
+
 
     public Rectangle getRect() {
         return rect;
@@ -38,11 +44,11 @@ public abstract class Creature extends Thread  {
     }
 
 
-    public int getHp() {
+    public Byte getHp() {
         return hp;
     }
 
-    public void setHp(int hp) {
+    public void setHp(Byte hp) {
         this.hp = hp;
     }
 
@@ -50,12 +56,15 @@ public abstract class Creature extends Thread  {
     protected ArrayList<Image> images;
 
 
-
     public abstract boolean interacts(Creature c);
+
     public abstract boolean touches(Platform p);
+
     protected abstract void initArr();
+
     protected abstract void defaultValues();
-    protected abstract void animate(int start,int end);
+
+    protected abstract void animate(int start, int end);
 
     public int getX() {
         return x;
@@ -132,32 +141,92 @@ public abstract class Creature extends Thread  {
     public void setImages(ArrayList<Image> images) {
         this.images = images;
     }
-    public void moveX(){
-        int mod=1;
-        if(!dir )
-            mod = -1;
 
-        x += (dx*mod);
+    public void moveX() {
+
+        int mod = 1;
+        if (!dir)
+            mod = -1;
+        x += (dx * mod);
+        updateRect();
+
+
     }
-    public void moveY(){
-        y+=dy;
-        rect = new Rectangle(x,y,width,height);
+
+    public void moveY() {
+
+        y += dy;
+      //  rect = new Rectangle(x, y, width, height);
+        updateRect();
+
     }
 
     public void setDir(boolean dir) {
         this.dir = dir;
     }
-    public void updateRect(){
-        if(dir)
-            rect = new Rectangle(x,y,size,size);
-        else rect = new Rectangle(x-size/2,y,size,size);
+
+    public synchronized void updateRect() {
+
+        if (rect != null) {
+            if (dir)
+
+                rect.setBounds(x, y, size, size);
+
+            else
+
+                rect.setBounds(x - size / 2, y, size, size);
+
+        } else createRect();
+    }
+
+
+    public synchronized void createRect() {
+
+        if (dir)
+            rect = new Rectangle(x, y, size, size);
+        else rect = new Rectangle(x - size / 2, y, size, size);
+
     }
 
     @Override
     public void run() {
+        synchronized (this) {
+            if (panel.isPause()) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
         super.run();
         updateRect();
 
         panel.repaint();
+
+    }
+
+    public void drawCreature(Graphics g) {
+       // g.drawRect((int) rect.getX(), (int) rect.getY(), size, size);
+        Image img = images.get(index);
+        if (dir)
+            g.drawImage(img, x, y, size, size, null);
+        else g.drawImage(img, x + size / 2, y, -size, size, null);
+
+    }
+
+    public boolean isGAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public boolean isNewDeath() {
+        return newDeath;
+    }
+
+    public void setNewDeath(boolean newDeath) {
+        this.newDeath = newDeath;
     }
 }

@@ -7,7 +7,6 @@ import java.awt.*;
 public class Platform extends Thread {
     private int x, y, dx, width, height;
     private Rectangle rect;
-    private static final int floorY = 425, floorH = 100;
     private boolean standingThis;
     private GamePanel panel;
     private Mario mario;
@@ -23,19 +22,16 @@ public class Platform extends Thread {
         this.standingThis = false;
         rect = new Rectangle(x, y, width, height);
         this.mario = mario;
-        if (y == floorY && height == floorH) {
-            this.width += 300;
-        }
+
     }
 
     public Platform() {
     }
 
     public void drawp(Graphics g) {
-        g.drawRect(x, y, width, height);
-        g.setColor(Color.red);
-        // if (height!= floorH)
-        // g.fillRect(x,y,width,height);
+        //g.drawRect(x, y, width, height);
+        //  g.setColor(Color.red);
+
 
     }
 
@@ -46,10 +42,9 @@ public class Platform extends Thread {
 
     public void moveX() {
         x += dx;
-        updateRect();
     }
 
-    public void updateRect() {
+    public synchronized void updateRect() {
         rect = new Rectangle(x, y, width, height);
     }
 
@@ -107,35 +102,59 @@ public class Platform extends Thread {
 
     public void standsOn() {
 
-        if (rect.intersects(mario.getRect()) && Math.abs(rect.getMinY() - mario.getRect().getMaxY()) < 11) {
-
+        double distance = rect.getMinY() - mario.getRect().getMaxY();
+        if (rect.intersects(mario.getRect()) && distance > -11 && distance <= 0) {
             standingThis = true;
+
         } else if (standingThis && !rect.intersects(mario.getRect())) {
             standingThis = false;
         }
 
     }
 
+
     public boolean runsTo(int d) {//right: d =1, left: d=-1
-        //  Rectangle temp = new Rectangle(x+(d*10),y,width,height);
-        standsOn();
-        if (height != floorH)
-            System.out.println("stands on: " + standingThis);
-        boolean a = false;
-        if (height != floorH) a = rect.intersects(mario.getRect()) && !standingThis;//&&!standingThis;
-        System.out.println(a);
-        return a;
+        if (standingThis)
+            return false;
+        Rectangle marioHitbox = mario.getRect();
+        Rectangle platformHitbox = rect;
+
+        if (d == 1) {
+            // Check for collision on the right side of Mario
+            return marioHitbox.getMaxX() >= platformHitbox.getMinX() &&
+                    marioHitbox.getMinX() < platformHitbox.getMinX() &&
+                    marioHitbox.getMinY() < platformHitbox.getMaxY() &&
+                    marioHitbox.getMaxY() > platformHitbox.getMinY();
+        } else {
+            // Check for collision on the left side of Mario
+            return marioHitbox.getMinX() <= platformHitbox.getMaxX() &&
+                    marioHitbox.getMaxX() > platformHitbox.getMaxX() &&
+                    marioHitbox.getMinY() < platformHitbox.getMaxY() &&
+                    marioHitbox.getMaxY() > platformHitbox.getMinY();
+        }
     }
 
     @Override
     public void run() {
+
         super.run();
+
         while (true) {
+            synchronized (this) {
+                if (panel.isPause()) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
             updateRect();
             standsOn();
+
+            if (bumpsIntoPlatform()) {
+                mario.setJumping(false);
+            }
             panel.repaint();
-
-
         }
     }
 
@@ -145,5 +164,24 @@ public class Platform extends Thread {
 
     public void setStandingThis(boolean standingThis) {
         this.standingThis = standingThis;
+    }
+
+
+    public boolean bumpsIntoPlatform() {
+        int rectBottom = rect.y + rect.height;
+        int marioTop = mario.getRect().y;
+        int overlapY = rectBottom - marioTop;
+        boolean isOnTop = overlapY >= 0 && overlapY < rect.height;
+        if (!isOnTop) {
+            return false; // rect is not on top of mario
+        }
+        int overlapX = Math.min(rect.x + rect.width, mario.getRect().x + mario.getRect().width) - Math.max(rect.x, mario.getRect().x);
+        boolean isOnSameColumn = overlapX >= 0 && overlapX < rect.width;
+        if (!isOnSameColumn) {
+            return false; //checking the x values
+        }
+        boolean intersects = rect.intersects(mario.getRect());
+        boolean isVeryClose = Math.abs(rectBottom - marioTop) < 5; // adjust the threshold as needed
+        return intersects || isVeryClose;
     }
 }
